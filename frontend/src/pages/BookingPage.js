@@ -171,7 +171,11 @@ const BookingPage = () => {
 
   const getPayload = (extra) => {
     let facilityValue = form.facility;
-    if (facilityValue === 'turf') {
+    let slotValue = form.time_slot;
+    const isGym = facilityValue && (facilityValue.startsWith('gym') || facilityValue === 'total_membership');
+    if (isGym) {
+      slotValue = 'Anytime';
+    } else if (facilityValue === 'turf') {
       const dateObj = new Date(form.date);
       const day = dateObj.getDay();
       const isWeekend = (day === 0 || day === 6);
@@ -180,6 +184,7 @@ const BookingPage = () => {
     return {
       ...form,
       facility: facilityValue,
+      time_slot: slotValue,
       ...extra,
     };
   };
@@ -289,7 +294,7 @@ const BookingPage = () => {
               BOOKING <span style={{ color: '#4caf50' }}>CONFIRMED!</span>
             </h1>
             <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, marginBottom: '2rem', fontSize: '0.95rem' }}>
-              Thank you, <strong style={{ color: 'var(--text)' }}>{form.name}</strong>! Your slot for <strong style={{ color: 'var(--gold)' }}>{selectedFacility?.label}</strong> on <strong style={{ color: 'var(--gold)' }}>{form.date}</strong> at <strong style={{ color: 'var(--gold)' }}>{form.time_slot}</strong> is confirmed.
+              Thank you, <strong style={{ color: 'var(--text)' }}>{form.name}</strong>! Your booking for <strong style={{ color: 'var(--gold)' }}>{selectedFacility?.label}</strong> starting on <strong style={{ color: 'var(--gold)' }}>{form.date}</strong> {(selectedFacility?.unit === 'hour' || form.facility === 'turf') ? <>at <strong style={{ color: 'var(--gold)' }}>{form.time_slot}</strong></> : <>with <strong style={{ color: 'var(--gold)' }}>Anytime Access</strong></>} is confirmed.
             </p>
             {paymentDone && (
               <div style={{ padding: '1rem', background: 'rgba(76,175,80,0.08)', border: '1px solid rgba(76,175,80,0.25)', marginBottom: '2rem', fontFamily: 'Rajdhani', color: '#81c784', fontSize: '0.9rem' }}>
@@ -589,7 +594,7 @@ const BookingPage = () => {
                           { l: 'Name', v: form.name },
                           { l: 'Phone', v: form.phone },
                           { l: 'Facility', v: selectedFacility?.label },
-                          { l: 'Date & Time', v: `${form.date} · ${form.time_slot}` },
+                          { l: 'Date & Time', v: `${form.date} · ${(selectedFacility?.unit === 'hour' || form.facility === 'turf') ? form.time_slot : 'Anytime Access'}` },
                         ].map((r, i) => (
                           <div key={i}>
                             <div style={{ fontFamily: 'Rajdhani', fontSize: '0.65rem', letterSpacing: '0.15em', color: '#555', textTransform: 'uppercase' }}>{r.l}</div>
