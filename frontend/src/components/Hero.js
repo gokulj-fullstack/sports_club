@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import Spotlight from './ui/Spotlight';
 import CourtBackdrop from './CourtBackdrop';
 
@@ -38,7 +39,7 @@ const Hero = () => {
                     Padappai's Premier Sports Hub
                   </span>
                 </motion.div>
-
+ 
                 {/* Headline */}
                 <h1 style={{ fontFamily: "'Syncopate', sans-serif", fontSize: 'clamp(2.8rem, 5.5vw, 5.5rem)', fontWeight: 700, fontStyle: 'normal', lineHeight: 1.05, marginBottom: '1.8rem', letterSpacing: '0.04em', color: '#f5f5f5' }}>
                   <motion.span initial={{ opacity:0, x:-40 }} animate={{ opacity:1, x:0 }} transition={{ delay:0.3, duration:0.65 }}
@@ -66,9 +67,13 @@ const Hero = () => {
 
                 {/* CTA Buttons */}
                 <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ delay:1.05 }}
-                  className="hero-ctas">
-                  <button className="btn-primary" onClick={() => scrollTo('book-now')}>Book a Session ↗</button>
-                  <button className="btn-outline" onClick={() => scrollTo('facilities')}>View Facilities</button>
+                  className="hero-ctas" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                  <Link to="/book" style={{ textDecoration: 'none' }}>
+                    <button className="btn-primary">Book a Session ↗</button>
+                  </Link>
+                  <Link to="/facilities" style={{ textDecoration: 'none' }}>
+                    <button className="btn-outline">View Facilities</button>
+                  </Link>
                 </motion.div>
 
                 {/* Facility Chips */}
