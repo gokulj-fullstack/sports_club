@@ -58,36 +58,45 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# ─── Database ─────────────────────────────────────────────────────────────────
+# Default: PostgreSQL (local / staging).
+# Override with DATABASE_URL for cloud hosts (Render, Railway, Heroku).
+# Falls back to SQLite only when neither DB_HOST nor DATABASE_URL is set
+# (handy for quick local testing without a running Postgres instance).
 
-# ─── MySQL (production) ───────────────────────────────────────────────────
-# Set DB_ENGINE=mysql (plus the vars below) in your environment/.env to switch
-# from the SQLite dev database to MySQL. Requires `mysqlclient` (see
-# requirements.txt) and a running MySQL server.
-if os.environ.get('DB_ENGINE') == 'mysql':
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'king_sports_club'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
-        'OPTIONS': {'charset': 'utf8mb4'},
+_db_host = os.environ.get('DB_HOST', '')
+
+if _db_host:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'king_sports_club'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': _db_host,
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': {
+                'connect_timeout': 10,
+            },
+            'CONN_MAX_AGE': 60,  # persistent connections (performance)
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
 
-# ─── PostgreSQL Handoff (Render / Heroku) ──────────────────────────────────
-# Set DATABASE_URL in your environment to use PostgreSQL database.
+# DATABASE_URL overrides individual vars — used by Render, Railway, Heroku, etc.
 if os.environ.get('DATABASE_URL'):
     import dj_database_url
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=600,
-        ssl_require=True
+        ssl_require=not DEBUG,   # enforce TLS only in production
     )
+
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

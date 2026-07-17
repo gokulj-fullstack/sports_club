@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import SplitText from '../components/SplitText';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API = process.env.REACT_APP_API_URL || 'https://sports-club-2i4r.onrender.com/api';
 
 const DEFAULT_PLANS = [
   { key: 'gym_ac', name: 'GYM AC', isGym: true, prices: { monthly: 0, quarterly: 0, halfyearly: 0, yearly: 0 }, popular: false, features: ['Cardio & Strength Machines', 'AC Environment', 'Unisex Gym Floor', 'Personal Training Available', '5AM – 10PM Access', 'Towel Service'], cta: 'Get Started' },

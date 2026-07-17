@@ -1,41 +1,34 @@
-"use client"
-
-import * as React from "react"
-import { motion, AnimatePresence, MotionConfig } from "framer-motion"
-import { ChevronDown, Shirt, Briefcase, Smartphone, Home, Layers } from "lucide-react"
+import * as React from "react";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
+import { ChevronDown, Shirt, Briefcase, Smartphone, Home, Layers } from "lucide-react";
 
 // Utility function for className merging
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(" ")
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
 }
 
 // Custom hook for click outside detection
-function useClickAway(ref: React.RefObject<HTMLElement>, handler: (event: MouseEvent | TouchEvent) => void) {
+function useClickAway(ref, handler) {
   React.useEffect(() => {
-    const listener = (event: MouseEvent | TouchEvent) => {
-      if (!ref.current || ref.current.contains(event.target as Node)) {
-        return
+    const listener = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) {
+        return;
       }
-      handler(event)
-    }
+      handler(event);
+    };
 
-    document.addEventListener("mousedown", listener)
-    document.addEventListener("touchstart", listener)
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
 
     return () => {
-      document.removeEventListener("mousedown", listener)
-      document.removeEventListener("touchstart", listener)
-    }
-  }, [ref, handler])
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler]);
 }
 
 // Button component
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "outline"
-  children: React.ReactNode
-}
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef(
   ({ className, variant, children, ...props }, ref) => {
     return (
       <button
@@ -51,36 +44,24 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {children}
       </button>
-    )
+    );
   }
-)
-Button.displayName = "Button"
+);
+Button.displayName = "Button";
 
-// Types
-interface Category {
-  id: string
-  label: string
-  icon: React.ElementType
-  color: string
-}
-
-const categories: Category[] = [
+const categories = [
   { id: "all", label: "All", icon: Layers, color: "#A06CD5" },
   { id: "lifestyle", label: "Lifestyle", icon: Shirt, color: "#FF6B6B" },
   { id: "desk", label: "Desk", icon: Briefcase, color: "#4ECDC4" },
   { id: "tech", label: "Tech", icon: Smartphone, color: "#45B7D1" },
   { id: "home", label: "Home", icon: Home, color: "#F9C74F" },
-]
+];
 
 // Icon wrapper with animation
-const IconWrapper = ({
-  icon: Icon,
-  isHovered,
-  color,
-}: { icon: React.ElementType; isHovered: boolean; color: string }) => (
-  <motion.div 
-    className="w-4 h-4 mr-2 relative" 
-    initial={false} 
+const IconWrapper = ({ icon: Icon, isHovered, color }) => (
+  <motion.div
+    className="w-4 h-4 mr-2 relative"
+    initial={false}
     animate={isHovered ? { scale: 1.2 } : { scale: 1 }}
   >
     <Icon className="w-4 h-4" />
@@ -96,7 +77,7 @@ const IconWrapper = ({
       </motion.div>
     )}
   </motion.div>
-)
+);
 
 // Animation variants
 const containerVariants = {
@@ -108,7 +89,7 @@ const containerVariants = {
       staggerChildren: 0.1,
     },
   },
-}
+};
 
 const itemVariants = {
   hidden: { opacity: 0, y: -10 },
@@ -120,22 +101,22 @@ const itemVariants = {
       ease: [0.25, 0.1, 0.25, 1],
     },
   },
-}
+};
 
 // Main component
 export function Component() {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const [selectedCategory, setSelectedCategory] = React.useState<Category>(categories[0])
-  const [hoveredCategory, setHoveredCategory] = React.useState<string | null>(null)
-  const dropdownRef = React.useRef<HTMLDivElement>(null)
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [selectedCategory, setSelectedCategory] = React.useState(categories[0]);
+  const [hoveredCategory, setHoveredCategory] = React.useState(null);
+  const dropdownRef = React.useRef(null);
 
-  useClickAway(dropdownRef, () => setIsOpen(false))
+  useClickAway(dropdownRef, () => setIsOpen(false));
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Escape") {
-      setIsOpen(false)
+      setIsOpen(false);
     }
-  }
+  };
 
   return (
     <MotionConfig reducedMotion="user">
@@ -159,10 +140,10 @@ export function Component() {
             aria-haspopup="true"
           >
             <span className="flex items-center">
-              <IconWrapper 
-                icon={selectedCategory.icon} 
-                isHovered={false} 
-                color={selectedCategory.color} 
+              <IconWrapper
+                icon={selectedCategory.icon}
+                isHovered={false}
+                color={selectedCategory.color}
               />
               {selectedCategory.label}
             </span>
@@ -213,10 +194,10 @@ export function Component() {
                   }}
                   style={{ transformOrigin: "top" }}
                 >
-                  <motion.div 
-                    className="py-2 relative" 
-                    variants={containerVariants} 
-                    initial="hidden" 
+                  <motion.div
+                    className="py-2 relative"
+                    variants={containerVariants}
+                    initial="hidden"
                     animate="visible"
                   >
                     <motion.div
@@ -236,15 +217,15 @@ export function Component() {
                     {categories.map((category, index) => (
                       <React.Fragment key={category.id}>
                         {index === 1 && (
-                          <motion.div 
-                            className="mx-4 my-2.5 border-t border-neutral-700" 
-                            variants={itemVariants} 
+                          <motion.div
+                            className="mx-4 my-2.5 border-t border-neutral-700"
+                            variants={itemVariants}
                           />
                         )}
                         <motion.button
                           onClick={() => {
-                            setSelectedCategory(category)
-                            setIsOpen(false)
+                            setSelectedCategory(category);
+                            setIsOpen(false);
                           }}
                           onHoverStart={() => setHoveredCategory(category.id)}
                           onHoverEnd={() => setHoveredCategory(null)}
@@ -275,5 +256,5 @@ export function Component() {
           </AnimatePresence>
         </div>
     </MotionConfig>
-  )
+  );
 }

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import SplitText from '../components/SplitText';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API = process.env.REACT_APP_API_URL || 'https://sports-club-2i4r.onrender.com/api';
 
 const ContactPage = () => {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });

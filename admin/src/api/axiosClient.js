@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://sports-club-2i4r.onrender.com/api';
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,

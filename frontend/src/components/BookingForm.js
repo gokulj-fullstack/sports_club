@@ -5,7 +5,7 @@ import axios from 'axios';
 import AerialCourtIllustration from './AerialCourtIllustration';
 import CustomSelect from './CustomSelect';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API = process.env.REACT_APP_API_URL || 'https://sports-club-2i4r.onrender.com/api';
 
 const BookingForm = () => {
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });

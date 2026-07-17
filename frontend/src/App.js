@@ -1,21 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Logo from './components/Logo';
-import HomePage from './pages/HomePage';
-import FacilitiesPage from './pages/FacilitiesPage';
-import BadmintonPage from './pages/BadmintonPage';
-import MembershipPage from './pages/MembershipPage';
-import BookingPage from './pages/BookingPage';
-import ContactPage from './pages/ContactPage';
-import GymPage from './pages/GymPage';
-import TurfPage from './pages/TurfPage';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+
+// Route-based code splitting — each page loads only when navigated to
+const HomePage       = lazy(() => import('./pages/HomePage'));
+const FacilitiesPage = lazy(() => import('./pages/FacilitiesPage'));
+const BadmintonPage  = lazy(() => import('./pages/BadmintonPage'));
+const MembershipPage = lazy(() => import('./pages/MembershipPage'));
+const BookingPage    = lazy(() => import('./pages/BookingPage'));
+const ContactPage    = lazy(() => import('./pages/ContactPage'));
+const GymPage        = lazy(() => import('./pages/GymPage'));
+const TurfPage       = lazy(() => import('./pages/TurfPage'));
+const Login          = lazy(() => import('./components/auth/Login'));
+const Register       = lazy(() => import('./components/auth/Register'));
 
 import './index.css';
+
+// Branded shimmer shown while a lazy page chunk is loading
+const PageFallback = () => (
+  <div style={{
+    minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+  }}>
+    <div style={{ width: '160px', height: '2px', background: 'var(--border)', position: 'relative', overflow: 'hidden', borderRadius: '2px' }}>
+      <motion.div
+        style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }}
+        animate={{ x: ['-100%', '100%'] }}
+        transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
+      />
+    </div>
+  </div>
+);
+
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -111,18 +129,20 @@ function AppContent() {
       <GlobalAtmosphere />
       <Navbar />
       <PageTransition>
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/facilities" element={<FacilitiesPage />} />
-          <Route path="/gym" element={<GymPage />} />
-          <Route path="/turf" element={<TurfPage />} />
-          <Route path="/badminton" element={<BadmintonPage />} />
-          <Route path="/membership" element={<MembershipPage />} />
-          <Route path="/book" element={<BookingPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
+        <Suspense fallback={<PageFallback />}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/facilities" element={<FacilitiesPage />} />
+            <Route path="/gym" element={<GymPage />} />
+            <Route path="/turf" element={<TurfPage />} />
+            <Route path="/badminton" element={<BadmintonPage />} />
+            <Route path="/membership" element={<MembershipPage />} />
+            <Route path="/book" element={<BookingPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </Suspense>
       </PageTransition>
       <Footer />
       <ScrollToTopButton />

@@ -1,4 +1,4 @@
-import { Component } from "@/components/ui/fluid-dropdown";
+import { Component } from "./fluid-dropdown";
 
 export default function DemoOne() {
   return <Component />;

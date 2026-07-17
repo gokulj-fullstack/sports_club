@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import SplitText from '../components/SplitText';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API = process.env.REACT_APP_API_URL || 'https://sports-club-2i4r.onrender.com/api';
 
 const PageHero = ({ label, titleWord1, titleWord2, sub }) => (
   <section style={{ paddingTop: '8rem', paddingBottom: '4rem', background: 'var(--bg)', borderBottom: '1px solid rgba(201,168,76,0.12)', position: 'relative', overflow: 'hidden' }}>

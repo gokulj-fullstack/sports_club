@@ -7,7 +7,7 @@ import FluidDropdown from '../components/ui/FluidDropdown';
 import SplitText from '../components/SplitText';
 import AerialCourtIllustration from '../components/AerialCourtIllustration';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API = process.env.REACT_APP_API_URL || 'https://sports-club-2i4r.onrender.com/api';
 
 // Razorpay integration
 const loadRazorpayScript = () => {

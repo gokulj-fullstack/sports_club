@@ -45,7 +45,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+      const API_URL = process.env.REACT_APP_API_URL || 'https://sports-club-2i4r.onrender.com/api';
       const response = await axios.post(`${API_URL}/login/`, { email, password });
 
       if (response.data.access) {
