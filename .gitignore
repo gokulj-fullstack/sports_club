@@ -1,0 +1,30 @@
+# Node
+node_modules/
+**/node_modules/
+
+# Python
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# React
+build/
+dist/
+
+# Environment variables
+.env
+*.env
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

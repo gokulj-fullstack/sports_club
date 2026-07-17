@@ -1,0 +1,1122 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Syncopate:wght@700&family=Montserrat:wght@900&display=swap');
+
+/* ============================================================
+   DESIGN TOKENS — SINGLE CINEMATIC BLACK THEME
+   (matches the Spline hero card: near-black bg.black/[0.96] + gold accent)
+   Light mode has been removed — this is the only palette.
+   ============================================================ */
+:root {
+  --bg:         #050505;
+  --bg-alt:     #0a0a0a;
+  --bg-card:    #0f0f0f;
+  --bg-card2:   #161616;
+  --gold:       #c9a84c;
+  --gold-lt:    #e2c370;
+  --gold-dk:    #a0812c;
+  --gold-dim:   rgba(201, 168, 76, 0.12);
+  --gold-glow:  rgba(201, 168, 76, 0.28);
+  --text:       #f5f5f5;
+  --text-sub:   #c9c9c9;
+  --text-muted: #8a8a8a;
+  --on-gold:    #050505;
+  --border:     rgba(201, 168, 76, 0.15);
+  --border-sub: rgba(255, 255, 255, 0.08);
+  --nav-bg:     rgba(5, 5, 5, 0.96);
+  --scrollbar:  #2e2e2e;
+  --card-hover: #161616;
+
+  --shadow-sm:  0 1px 4px rgba(0,0,0,0.50), 0 4px 16px rgba(0,0,0,0.35);
+  --shadow-md:  0 4px 20px rgba(0,0,0,0.60), 0 1px 4px rgba(0,0,0,0.40);
+  --shadow-lg:  0 16px 48px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.45);
+  --shadow-gold: 0 8px 30px var(--gold-glow);
+  --radius-sm:  4px;
+  --radius-md:  8px;
+
+  /* premium motion system */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:   0.2s;
+  --dur-base:   0.4s;
+  --dur-slow:   0.7s;
+
+  color-scheme: dark;
+}
+
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  transition: background-color var(--dur-slow) var(--ease-soft),
+              color var(--dur-slow) var(--ease-soft);
+}
+
+/* respect reduced-motion users — premium also means accessible */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-alt); }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 3px;
+  transition: background var(--dur-fast) ease;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ============================================================
+   KEYFRAMES — the animation library
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+  50%      { box-shadow: 0 0 0 8px transparent; }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes underlineSweep {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* utility animation classes — add to any element via JS/IntersectionObserver */
+.anim-fade-up   { animation: fadeUp var(--dur-slow) var(--ease-out) both; }
+.anim-fade-in   { animation: fadeIn var(--dur-base) var(--ease-soft) both; }
+.anim-scale-in  { animation: scaleIn var(--dur-base) var(--ease-spring) both; }
+.anim-float     { animation: floatSlow 4.5s var(--ease-soft) infinite; }
+
+/* staggered children — apply .stagger to a parent, children get incremental delay */
+.stagger > * { animation: fadeUp var(--dur-slow) var(--ease-out) both; }
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.stagger > *:nth-child(5) { animation-delay: 0.33s; }
+.stagger > *:nth-child(6) { animation-delay: 0.40s; }
+
+/* scroll-reveal pattern: pair with IntersectionObserver toggling .is-visible */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+.section-label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  position: relative;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.gold-text { color: var(--gold); }
+
+/* gold shimmer text — use sparingly, e.g. hero headline accent word */
+.gold-shimmer-text {
+  background: linear-gradient(90deg, var(--gold-dk) 0%, var(--gold-lt) 25%, var(--gold) 50%, var(--gold-lt) 75%, var(--gold-dk) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--gold); color: var(--on-gold);
+  padding: 0.85rem 2rem;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
+  border: none; cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--dur-base) var(--ease-spring),
+              box-shadow var(--dur-base) var(--ease-out),
+              background var(--dur-fast) ease;
+  text-decoration: none;
+}
+/* sheen sweep on hover */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.65s var(--ease-out);
+}
+.btn-primary:hover {
+  background: var(--gold-lt);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold);
+}
+.btn-primary:hover::after { left: 130%; }
+.btn-primary:active { transform: translateY(-1px) scale(0.98); }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: transparent; color: var(--gold);
+  padding: 0.85rem 2rem;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
+  border: 1px solid var(--gold);
+  cursor: pointer;
+  position: relative;
+  transition: all var(--dur-base) var(--ease-spring);
+  text-decoration: none;
+}
+.btn-outline:hover {
+  background: var(--gold);
+  color: var(--on-gold);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold);
+}
+.btn-outline:active { transform: translateY(-1px) scale(0.98); }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.container {
+  max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+}
+
+.hero-content-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 5.5rem;
+  padding-bottom: 6rem;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* subtle ambient gold glow drifting behind hero content — add a div.hero-glow inside */
+.hero-glow {
+  position: absolute;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  animation: floatSlow 8s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* ============================================================
+   FEATURE CARDS (used in HomePage)
+   ============================================================ */
+.ksc-feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) ease,
+              box-shadow var(--dur-base) var(--ease-out),
+              background var(--dur-fast) ease;
+  will-change: transform;
+}
+.ksc-feature-card:hover {
+  background: var(--card-hover);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+}
+.ksc-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  transform: scaleX(0);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.ksc-feature-card:hover::before { transform: scaleX(1); }
+
+.ksc-feature-card h3 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.8rem;
+  color: var(--text);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.75rem;
+  transition: color var(--dur-fast) ease;
+}
+.ksc-feature-card:hover h3 { color: var(--gold); }
+
+.ksc-feature-card p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.ksc-price-badge {
+  padding: 0.3rem 0.8rem;
+  background: var(--gold-dim);
+  border: 1px solid var(--border);
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.ksc-feature-card:hover .ksc-price-badge { border-color: var(--gold); }
+
+.ksc-price-badge span {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.ksc-learn-more {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--border);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+.ksc-learn-more:hover {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   WHY CARDS
+   ============================================================ */
+.ksc-why-card {
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: transform var(--dur-base) var(--ease-out),
+              border-color var(--dur-fast) ease,
+              box-shadow var(--dur-base) ease;
+}
+.ksc-why-card:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+.ksc-why-card h4 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.1rem;
+  color: var(--text);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.4rem;
+}
+.ksc-why-card p {
+  color: var(--text-muted);
+  font-size: 0.83rem;
+  line-height: 1.65;
+}
+
+/* ============================================================
+   TESTIMONIAL CARDS
+   ============================================================ */
+.ksc-testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) ease;
+}
+.ksc-testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.ksc-testimonial-card .ksc-quote-mark {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 4rem;
+  color: var(--gold-dim);
+  line-height: 1;
+}
+.ksc-testimonial-card p {
+  color: var(--text-sub);
+  font-size: 0.9rem;
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+.ksc-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1rem;
+  color: var(--gold);
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.ksc-testimonial-card:hover .ksc-avatar { transform: scale(1.1); }
+
+.ksc-avatar-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.ksc-avatar-role {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.7rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   SECTION BACKGROUNDS
+   ============================================================ */
+.ksc-section-dark {
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.ksc-section-light {
+  background: var(--bg);
+}
+.ksc-section-accent {
+  background: var(--bg-card2);
+  border-top: 1px solid var(--border-sub);
+  border-bottom: 1px solid var(--border-sub);
+}
+
+/* ============================================================
+   CTA BAND
+   ============================================================ */
+.ksc-cta-band {
+  background: linear-gradient(135deg, var(--bg-alt) 0%, var(--bg) 60%, var(--bg-alt) 100%);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.ksc-cta-band::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.ksc-cta-band h2 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--text);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+.ksc-cta-band p {
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+}
+
+/* ============================================================
+   NAVBAR (simple horizontal nav)
+   ============================================================ */
+.simple-nav-container {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 1100px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.simple-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 64px;
+  padding: 0 1.25rem;
+  background-color: rgba(28, 26, 20, 0.72);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 2px 10px rgba(201,168,76,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+.simple-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.simple-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: nowrap;
+}
+
+.simple-nav-link {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-sub);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-fast) ease;
+}
+
+.simple-nav-link:hover {
+  color: var(--gold);
+}
+
+.simple-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.simple-nav-dropdown {
+  position: relative;
+}
+
+.simple-nav-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.simple-nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.85rem);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 190px;
+  background-color: rgba(28, 26, 20, 0.9);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  border-radius: 0.6rem;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.55), 0 2px 10px rgba(201,168,76,0.12);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  z-index: 1001;
+  animation: navDropdownIn 0.16s ease-out;
+}
+
+@keyframes navDropdownIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.simple-nav-dropdown-item {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-sub);
+  text-decoration: none;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.4rem;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.simple-nav-dropdown-item:hover {
+  background: rgba(201, 168, 76, 0.1);
+  color: var(--gold);
+}
+
+@media (max-width: 900px) {
+  .simple-nav-container {
+    width: 96%;
+    top: 1rem;
+  }
+
+  .simple-nav {
+    padding: 0 0.9rem;
+  }
+
+  .simple-nav-links {
+    gap: 1rem;
+  }
+
+  .nav-logo-sub {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .simple-nav-links > .simple-nav-link:not(:last-child),
+  .simple-nav-links > .simple-nav-dropdown {
+    display: none;
+  }
+
+  .simple-nav-links {
+    gap: 0;
+  }
+
+  .simple-nav-right .simple-nav-link {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Legacy CardNav styles (kept for reference, no longer used by Navbar.js)
+   ============================================================ */
+.card-nav-container {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 900px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.card-nav {
+  display: block;
+  height: 60px;
+  padding: 0;
+  background-color: var(--nav-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  will-change: height;
+  backdrop-filter: blur(20px);
+  transition: border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.card-nav-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.6rem 0.55rem 1.1rem;
+  z-index: 2;
+}
+
+.hamburger-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 5px;
+  width: 32px;
+  outline: none;
+  color: var(--text);
+}
+
+.hamburger-menu:hover .hamburger-line {
+  opacity: 0.75;
+}
+
+.hamburger-line {
+  width: 22px;
+  height: 2px;
+  background-color: currentColor;
+  transition: transform 0.25s var(--ease-out), opacity 0.2s var(--ease-out);
+  transform-origin: 50% 50%;
+}
+
+.hamburger-menu.open .hamburger-line:first-child {
+  transform: translateY(3.5px) rotate(45deg);
+}
+
+.hamburger-menu.open .hamburger-line:last-child {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.nav-logo-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  background: linear-gradient(90deg, var(--gold-dk), var(--gold-lt) 50%, var(--gold-dk));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: background-position var(--dur-slow) ease;
+}
+.logo-container:hover .nav-logo-title { background-position: -100% 0; }
+
+.nav-logo-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 500;
+  font-size: clamp(0.42rem, 1vw, 0.5rem);
+  letter-spacing: 0.28em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.card-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.card-nav-cta-button {
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold) 60%, var(--gold-dk));
+  background-size: 180% 180%;
+  background-position: 0% 50%;
+  color: var(--on-gold);
+  border: none;
+  border-radius: 0.45rem;
+  padding: 0 1.2rem;
+  height: 38px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-position var(--dur-slow) ease, box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-spring);
+}
+
+.card-nav-cta-button:hover {
+  background-position: 100% 50%;
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-1px);
+}
+
+.card-nav-cta-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.card-nav-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 60px;
+  bottom: 0;
+  padding: 0.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-nav.open .card-nav-content {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.nav-card {
+  height: 100%;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 0.55rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px;
+  gap: 8px;
+  user-select: none;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--bg-card);
+}
+
+.nav-card-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+}
+
+.nav-card-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-card-link {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-sub);
+  transition: color var(--dur-fast) ease, opacity var(--dur-fast) ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-card-link svg {
+  color: var(--gold);
+  transition: transform var(--dur-fast) ease;
+}
+
+.nav-card-link:hover {
+  color: var(--gold);
+}
+
+.nav-card-link:hover svg {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 768px) {
+  .card-nav-container {
+    width: 94%;
+    top: 1rem;
+    z-index: 1000;
+  }
+
+  .card-nav-top {
+    padding: 0.5rem 0.8rem;
+    justify-content: space-between;
+  }
+
+  .hamburger-menu {
+    order: 2;
+  }
+
+  .logo-container {
+    position: static;
+    transform: none;
+    order: 1;
+  }
+
+  .card-nav-cta-button {
+    display: none;
+  }
+
+  .card-nav-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0.5rem;
+    bottom: 0;
+    justify-content: flex-start;
+  }
+
+  .nav-card {
+    height: auto;
+    min-height: 60px;
+    flex: 1 1 auto;
+    max-height: none;
+    padding: 10px 14px;
+  }
+
+  .nav-card-label {
+    font-size: 1.25rem;
+  }
+
+  .nav-card-link {
+    font-size: 0.88rem;
+    padding: 2px 0;
+  }
+}
+
+/* ============================================================
+   PREMIUM 3D SYSTEM + IMAGE / MESH BACKGROUNDS
+   (site-wide utilities — safe additions, nothing removed above)
+   ============================================================ */
+
+@keyframes blobDrift {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33%      { transform: translate(4%, -5%) scale(1.08) rotate(6deg); }
+  66%      { transform: translate(-3%, 4%) scale(0.96) rotate(-4deg); }
+}
+@keyframes blobDriftSlow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-5%, 6%) scale(1.1); }
+}
+@keyframes meshRotate {
+  0%   { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  50%  { background-position: 30% 20%, 70% 30%, 40% 70%; }
+  100% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+}
+@keyframes kenBurns {
+  0%   { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.14) translate(-1.5%, -1%); }
+}
+@keyframes tiltIn {
+  from { transform: perspective(1000px) rotateX(8deg) rotateY(-4deg) translateY(24px); opacity: 0; }
+  to   { transform: perspective(1000px) rotateX(0) rotateY(0) translateY(0); opacity: 1; }
+}
+@keyframes glowRingPulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow), var(--shadow-lg); }
+  50%      { box-shadow: 0 0 0 10px transparent, var(--shadow-lg); }
+}
+
+/* ── Animated gradient-mesh background — drop on any section ── */
+.bg-mesh {
+  position: relative;
+  background-image:
+    radial-gradient(circle at 15% 20%, var(--gold-glow) 0%, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(34,139,70,0.14) 0%, transparent 50%),
+    radial-gradient(circle at 50% 90%, rgba(30,144,255,0.10) 0%, transparent 55%);
+  background-size: 180% 180%, 160% 160%, 200% 200%;
+  animation: meshRotate 18s ease-in-out infinite;
+}
+
+/* ── Soft floating blurred blobs — add as absolutely positioned children with these classes ── */
+.bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-blob-gold  { background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%); animation: blobDrift 12s ease-in-out infinite; }
+.bg-blob-green { background: radial-gradient(circle, rgba(34,139,70,0.20) 0%, transparent 70%); animation: blobDriftSlow 15s ease-in-out infinite; }
+.bg-blob-blue  { background: radial-gradient(circle, rgba(30,144,255,0.16) 0%, transparent 70%); animation: blobDrift 10s ease-in-out infinite reverse; }
+
+/* ── Subtle noise texture overlay for premium grain (add as a sibling ::after via class) ── */
+.bg-noise {
+  position: relative;
+  isolation: isolate;
+}
+.bg-noise::after {
+  content: '';
+  position: absolute; inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Full-bleed image section with dark gradient overlay + slow Ken Burns zoom ──
+   Usage: <div className="ksc-image-band" style={{ backgroundImage: `url(${img})` }}> */
+.ksc-image-band {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+.ksc-image-band::before {
+  content: '';
+  position: absolute; inset: -3%;
+  background: inherit;
+  background-size: cover;
+  background-position: center;
+  animation: kenBurns 20s ease-in-out infinite alternate;
+  z-index: 0;
+}
+.ksc-image-band::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(8,7,6,0.65) 0%, rgba(8,7,6,0.82) 100%);
+  z-index: 1;
+}
+.ksc-image-band > * { position: relative; z-index: 2; }
+
+/* ── True 3D tilt-on-hover for cards — perspective + dual-axis rotation ── */
+.tilt-3d {
+  perspective: 1200px;
+}
+.tilt-3d-inner {
+  transform-style: preserve-3d;
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.tilt-3d:hover .tilt-3d-inner {
+  transform: rotateX(6deg) rotateY(-6deg) translateY(-6px) scale(1.015);
+  box-shadow: var(--shadow-lg), 0 30px 60px -20px rgba(0,0,0,0.35);
+}
+
+/* ── Layered glass card with real depth (frosted + inner highlight + outer glow) ── */
+.glass-premium {
+  position: relative;
+  background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-card2) 100%);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.06);
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-fast) ease;
+}
+.glass-premium:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-lg), var(--shadow-gold);
+}
+.glass-premium::before {
+  content: '';
+  position: absolute; inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--gold-lt), transparent 40%, transparent 60%, var(--gold));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--dur-base) ease;
+  pointer-events: none;
+}
+.glass-premium:hover::before { opacity: 1; }
+
+/* ── Parallax scroll section (background-attachment based, no JS needed) ── */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+}
+@media (max-width: 900px) {
+  /* fixed attachment is unreliable on mobile Safari — fall back to scroll */
+  .parallax-bg { background-attachment: scroll; }
+}
+
+/* ── Give the existing feature/why/testimonial cards genuine 3D depth on hover ── */
+.ksc-feature-card,
+.ksc-why-card,
+.ksc-testimonial-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+.ksc-feature-card:hover {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) translateY(-8px);
+  box-shadow: var(--shadow-lg), 0 26px 50px -22px rgba(0,0,0,0.4);
+}
+.ksc-why-card:hover {
+  transform: perspective(900px) rotateX(2.5deg) rotateY(-2.5deg) translateY(-5px);
+}
+.ksc-testimonial-card:hover {
+  transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-5px);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .container { padding: 0 1.5rem; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 1rem; }
+  .section-title { font-size: clamp(1.8rem, 5vw, 3rem); }
+  .btn-primary, .btn-outline { padding: 0.75rem 1.5rem; font-size: 0.85rem; }
+  .hero-content-wrap { padding-top: 4.5rem; padding-bottom: 5.5rem; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 0.75rem; }
+  .section-title { font-size: clamp(1.5rem, 6vw, 2.5rem); }
+  .section-label { font-size: 0.65rem; }
+  .btn-primary, .btn-outline { padding: 0.65rem 1.25rem; font-size: 0.8rem; }
+}

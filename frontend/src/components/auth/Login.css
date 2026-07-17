@@ -1,0 +1,282 @@
+.ksc-login-section {
+  min-height: 100vh;
+  padding: 9rem 0 5rem;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ksc-login-section::before {
+  content: '';
+  position: absolute;
+  top: -15%; left: -10%;
+  width: 420px; height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+  filter: blur(60px);
+  animation: blobDrift 12s ease-in-out infinite;
+  pointer-events: none;
+}
+.ksc-login-section::after {
+  content: '';
+  position: absolute;
+  bottom: -20%; right: -8%;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(30,144,255,0.14) 0%, transparent 70%);
+  filter: blur(60px);
+  animation: blobDriftSlow 15s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+
+.ksc-login-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-card2) 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow-lg, 0 12px 48px rgba(0,0,0,0.35)), inset 0 1px 0 rgba(255,255,255,0.06);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Left brand panel ---------- */
+.ksc-login-brand {
+  position: relative;
+  padding: 4rem 3rem;
+  background:
+    linear-gradient(160deg, rgba(156,122,46,0.10), transparent 60%),
+    var(--bg-alt);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ksc-login-brand .section-title {
+  margin: 0.6rem 0 1.4rem;
+}
+
+.ksc-login-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-sub);
+  max-width: 36ch;
+  margin-bottom: 2.2rem;
+}
+
+.ksc-login-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.ksc-login-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.ksc-login-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: var(--gold-dim);
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ---------- Right form panel ---------- */
+.ksc-login-form-panel {
+  padding: 4rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ksc-login-form-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2.4rem;
+  letter-spacing: 0.03em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.ksc-login-form-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0.6rem 0 2rem;
+}
+
+.ksc-alert {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.4rem;
+  border-left: 3px solid;
+}
+
+.ksc-alert-error {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.ksc-alert-success {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.ksc-form-group {
+  margin-bottom: 1.4rem;
+}
+
+.ksc-form-group label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-sub);
+  margin-bottom: 0.55rem;
+}
+
+.ksc-password-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ksc-forgot-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.ksc-forgot-link:hover { text-decoration: underline; }
+
+.ksc-form-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  outline: none;
+  border-radius: 6px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ksc-form-input::placeholder { color: var(--text-muted); }
+
+.ksc-form-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+}
+
+.ksc-form-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.ksc-password-wrapper { position: relative; }
+
+.ksc-password-toggle {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.ksc-submit-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: var(--gold);
+  color: var(--on-gold);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0.95rem 1.5rem;
+  margin-top: 0.4rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.ksc-submit-btn:hover:not(:disabled) {
+  background: var(--gold-lt);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md), var(--shadow-gold);
+}
+.ksc-submit-btn:active:not(:disabled) { transform: translateY(-1px) scale(0.98); }
+
+.ksc-submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+.ksc-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(10,10,10,0.3);
+  border-top-color: var(--on-gold);
+  border-radius: 50%;
+  animation: ksc-spin 0.7s linear infinite;
+}
+
+@keyframes ksc-spin { to { transform: rotate(360deg); } }
+
+.ksc-login-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.ksc-login-footer a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ksc-login-footer a:hover { text-decoration: underline; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .ksc-login-wrapper { grid-template-columns: 1fr; }
+  .ksc-login-brand { border-right: none; border-bottom: 1px solid var(--border); padding: 3rem 2rem; }
+  .ksc-login-form-panel { padding: 3rem 2rem; }
+  .ksc-login-section { padding-top: 7rem; }
+}

@@ -1,0 +1,34 @@
+
+> king-sports-club@0.2.0 build
+> react-scripts build
+
+Creating an optimized production build...
+Compiled successfully.
+
+File sizes after gzip:
+
+  722.62 kB  build/static/js/293.a02cd90f.chunk.js
+  582.92 kB  build/static/js/840.58a7a945.chunk.js
+  229.8 kB   build/static/js/main.517c0748.js
+  49.01 kB   build/static/js/946.ec9da81e.chunk.js
+  27.78 kB   build/static/js/160.d397ad23.chunk.js
+  23.18 kB   build/static/js/23.e590c507.chunk.js
+  20.76 kB   build/static/js/917.e3dc766c.chunk.js
+  17.1 kB    build/static/js/516.db90b9bd.chunk.js
+  10.81 kB   build/static/js/208.e1d52f59.chunk.js
+  7.98 kB    build/static/js/519.6140fc77.chunk.js
+  6.2 kB     build/static/css/main.fc31dc29.css
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
