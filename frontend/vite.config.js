@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       'process.env.REACT_APP_API_URL': JSON.stringify(env.VITE_API_URL || 'https://sports-club-2i4r.onrender.com/api'),
-      'process.env.REACT_APP_ADMIN_URL': JSON.stringify(env.VITE_ADMIN_URL || 'http://localhost:5173'),
+      'process.env.REACT_APP_ADMIN_URL': JSON.stringify(env.VITE_ADMIN_URL || 'https://sports-club-2.onrender.com'),
     },
   plugins: [react()],
   resolve: {

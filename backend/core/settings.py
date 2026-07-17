@@ -101,6 +101,13 @@ if os.environ.get('DATABASE_URL'):
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://sports-club-1.onrender.com",
+    "https://sports-club-2.onrender.com",
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+
 # ─── Custom user model (email-based login, from accounts app) ────────────────
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
