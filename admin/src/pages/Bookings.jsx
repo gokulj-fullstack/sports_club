@@ -12,7 +12,7 @@ import useDebounce from '../hooks/useDebounce';
 import { listBookings, updateBooking, createBooking, deleteBooking } from '../api/bookings';
 import { formatCurrency, formatDate, titleCase } from '../utils/format';
 import {
-  FACILITY_OPTIONS, PAYMENT_STATUS_OPTIONS, BOOKING_STATUS_OPTIONS,
+  FACILITY_OPTIONS, PAYMENT_STATUS_OPTIONS, BOOKING_STATUS_OPTIONS, TIME_SLOT_OPTIONS,
 } from '../utils/constants';
 
 const toneFor = (options, value) => options.find((o) => o.value === value)?.tone || 'default';
@@ -249,7 +249,7 @@ export default function Bookings() {
             <Input label="Email" type="email" value={editing.data.email} onChange={(e) => updateField('email', e.target.value)} required />
             <Select label="Facility" options={FACILITY_OPTIONS} value={editing.data.facility} onChange={(e) => updateField('facility', e.target.value)} />
             <Input label="Date" type="date" value={editing.data.date} onChange={(e) => updateField('date', e.target.value)} required />
-            <Input label="Slot Time" placeholder="e.g. 6:00 PM" value={editing.data.time_slot} onChange={(e) => updateField('time_slot', e.target.value)} required />
+            <Select label="Slot Time" placeholder="Select slot time..." options={TIME_SLOT_OPTIONS} value={editing.data.time_slot} onChange={(e) => updateField('time_slot', e.target.value)} required />
             <Input label="Hours" type="number" min={1} value={editing.data.hours} onChange={(e) => updateField('hours', Number(e.target.value))} />
             <Input label="Amount (₹)" type="number" min={0} value={editing.data.amount} onChange={(e) => updateField('amount', Number(e.target.value))} />
             <Select label="Payment Status" options={PAYMENT_STATUS_OPTIONS} value={editing.data.payment_status} onChange={(e) => updateField('payment_status', e.target.value)} />

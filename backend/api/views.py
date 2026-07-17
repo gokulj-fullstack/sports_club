@@ -216,10 +216,25 @@ def get_slot_availability(request):
         '7:00 PM','8:00 PM','9:00 PM','10:00 PM',
     ]
 
+    def normalize_time_slot(slot_str):
+        if not slot_str:
+            return ""
+        for fmt in ('%I:%M %p', '%I:%M%p', '%I %p', '%I%p', '%H:%M', '%H:%M:%S'):
+            try:
+                val = datetime.datetime.strptime(slot_str.strip(), fmt)
+                std_str = val.strftime('%I:%M %p')
+                if std_str.startswith('0'):
+                    std_str = std_str[1:]
+                return std_str
+            except ValueError:
+                pass
+        return slot_str
+
     def slot_index(slot_str):
         """Return the index of the slot in ALL_SLOTS, or -1 if not found."""
+        normalized = normalize_time_slot(slot_str)
         try:
-            return ALL_SLOTS.index(slot_str)
+            return ALL_SLOTS.index(normalized)
         except ValueError:
             return -1
 
