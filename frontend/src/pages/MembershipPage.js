@@ -7,25 +7,41 @@ import SplitText from '../components/SplitText';
 const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
 const DEFAULT_PLANS = [
-  { key: 'gym_ac', name: 'GYM AC', price: 0, period: '/year', popular: false, features: ['Cardio & Strength Machines', 'AC Environment', 'Personal Training Available', '5AM – 10PM Access', 'Towel Service'], cta: 'Get Started' },
-  { key: 'gym_nonac', name: 'GYM NON-AC', price: 0, period: '/year', popular: false, features: ['Strength Training Machines', 'Non-AC Facility', 'Personal Training Available', '5AM – 10PM Access', 'Heavy Free Weights'], cta: 'Get Started' },
+  { key: 'gym_ac', name: 'GYM AC', isGym: true, prices: { monthly: 0, quarterly: 0, halfyearly: 0, yearly: 0 }, popular: false, features: ['Cardio & Strength Machines', 'AC Environment', 'Personal Training Available', '5AM – 10PM Access', 'Towel Service'], cta: 'Get Started' },
+  { key: 'gym_nonac', name: 'GYM NON-AC', isGym: true, prices: { monthly: 0, quarterly: 0, halfyearly: 0, yearly: 0 }, popular: false, features: ['Strength Training Machines', 'Non-AC Facility', 'Personal Training Available', '5AM – 10PM Access', 'Heavy Free Weights'], cta: 'Get Started' },
   { key: 'badminton_membership', name: 'BADMINTON', price: 0, period: '/month', popular: false, features: ['1 Hour Court Access Per Day', '3 Synthetic Courts', 'Equipment Rental Discounts', 'Coaching Available', '5AM – 11PM Access', 'Priority Booking'], cta: 'Get Started' },
   { key: 'total_membership', name: 'TOTAL MEMBERSHIP', price: 0, period: '/month', popular: true, features: ['Full Gym Access (AC & Non-AC)', 'Unlimited Badminton Courts', 'Turf Bookings (Special Rates)', 'Priority Reservations', 'Guest Passes (2/month)', 'Personal Coaching Sessions', 'Nutrition Consultation'], cta: 'Contact Us' },
 ];
 
 const MembershipPage = () => {
   const [plans, setPlans] = useState(DEFAULT_PLANS);
+  const [walkinPrices, setWalkinPrices] = useState({ badminton: 0, turfWeekday: 0, turfWeekend: 0 });
 
   useEffect(() => {
     axios.get(`${API}/pricing/`)
       .then(res => {
         const data = res.data;
         setPlans(prev => prev.map(p => {
-          if (data[p.key] !== undefined) {
-            return { ...p, price: data[p.key] };
+          if (p.isGym) {
+            return {
+              ...p,
+              prices: {
+                monthly: Number(data[`${p.key}_monthly`] || 0),
+                quarterly: Number(data[`${p.key}_quarterly`] || 0),
+                halfyearly: Number(data[`${p.key}_halfyearly`] || 0),
+                yearly: Number(data[`${p.key}_yearly`] || 0),
+              }
+            };
+          } else {
+            if (data[p.key] !== undefined) {
+              return { ...p, price: data[p.key] };
+            }
           }
           return p;
         }));
+        if (data.badminton_1 !== undefined) setWalkinPrices(prev => ({ ...prev, badminton: Number(data.badminton_1) }));
+        if (data.turf_weekday !== undefined) setWalkinPrices(prev => ({ ...prev, turfWeekday: Number(data.turf_weekday) }));
+        if (data.turf_weekend !== undefined) setWalkinPrices(prev => ({ ...prev, turfWeekend: Number(data.turf_weekend) }));
       })
       .catch(err => console.error("Error fetching membership prices:", err));
   }, []);
@@ -56,10 +72,28 @@ const MembershipPage = () => {
               {plan.popular && <div style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', background: 'var(--gold)', color: 'var(--text)', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.65rem', letterSpacing: '0.15em', padding: '0.3rem 0.8rem', textTransform: 'uppercase' }}>POPULAR</div>}
               {plan.popular && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />}
               <div style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.3em', color: plan.popular ? 'var(--gold)' : 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>{plan.name}</div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginBottom: '2rem' }}>
-                <span style={{ fontFamily: 'Bebas Neue', fontSize: '3.5rem', color: 'var(--text)', lineHeight: 1 }}>{plan.price}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{plan.period}</span>
-              </div>
+              {plan.isGym ? (
+                <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {[
+                    { label: 'Monthly', price: plan.prices.monthly, period: '/mo' },
+                    { label: 'Quarterly', price: plan.prices.quarterly, period: '/qt' },
+                    { label: 'Half-Yearly', price: plan.prices.halfyearly, period: '/6mo' },
+                    { label: 'Yearly', price: plan.prices.yearly, period: '/yr' },
+                  ].map(opt => (
+                    <div key={opt.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.4rem 0.8rem', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '0.75rem', fontFamily: 'Rajdhani', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{opt.label}</span>
+                      <span style={{ fontSize: '1rem', fontFamily: 'Rajdhani', fontWeight: 700, color: 'var(--gold)' }}>₹{opt.price.toLocaleString('en-IN')}{opt.period}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginBottom: '2rem' }}>
+                  <span style={{ fontFamily: 'Bebas Neue', fontSize: '3.5rem', color: 'var(--text)', lineHeight: 1 }}>
+                    {plan.price === 0 || isNaN(plan.price) ? '₹0' : `₹${plan.price.toLocaleString('en-IN')}`}
+                  </span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{plan.period}</span>
+                </div>
+              )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
                 {plan.features.map((f, j) => (
                   <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
@@ -88,9 +122,9 @@ const MembershipPage = () => {
           <h2 style={{ fontFamily: 'Bebas Neue', fontSize: '2rem', color: 'var(--text)', letterSpacing: '0.03em', marginBottom: '2rem' }}>NO COMMITMENT? <span className="gold-text">NO PROBLEM</span></h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
             {[
-              { title: 'Badminton Court', price: '₹300', per: 'per hour', icon: '🏸', note: 'All synthetic courts' },
-              { title: 'Turf (Weekday)', price: '₹700', per: 'per session', icon: '⚽', note: 'Mon–Fri' },
-              { title: 'Turf (Weekend)', price: '₹1,000', per: 'per session', icon: '🌙', note: 'Sat–Sun' },
+              { title: 'Badminton Court', price: walkinPrices.badminton ? `₹${walkinPrices.badminton.toLocaleString('en-IN')}` : '₹0', per: 'per hour', icon: '🏸', note: 'All synthetic courts' },
+              { title: 'Turf (Weekday)', price: walkinPrices.turfWeekday ? `₹${walkinPrices.turfWeekday.toLocaleString('en-IN')}` : '₹0', per: 'per session', icon: '⚽', note: 'Mon–Fri' },
+              { title: 'Turf (Weekend)', price: walkinPrices.turfWeekend ? `₹${walkinPrices.turfWeekend.toLocaleString('en-IN')}` : '₹0', per: 'per session', icon: '🌙', note: 'Sat–Sun' },
               { title: 'Gym Day Pass', price: 'Ask Us', per: 'per day', icon: '🏋️', note: 'Call +91 90807 03491' },
             ].map((rate, i) => (
               <motion.div key={i} className="glass-premium" whileHover={{ y: -5, rotateX: 2, rotateY: -2 }} style={{ padding: '1.5rem', textAlign: 'center', transformStyle: 'preserve-3d' }}>

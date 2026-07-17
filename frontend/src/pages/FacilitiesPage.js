@@ -22,14 +22,14 @@ const PageHero = ({ label, titleWord1, titleWord2, sub }) => (
 
 const DEFAULT_FACILITIES = [
   {
-    id: 'gym-ac', icon: '🏋️', name: 'Fitness Gym — AC', price: '₹0/year', hours: '5AM – 10PM',
+    id: 'gym-ac', icon: '🏋️', name: 'Fitness Gym — AC', price: 'from ₹0/month', hours: '5AM – 10PM',
     desc: 'Beat the heat while you train. Our air-conditioned gym floor features premium cardio machines, weight stations, and free weights.',
     features: ['Premium Cardio Machines', 'Weight Stations', 'Free Weights Area', 'Personal Training Available', 'AC Environment'],
     tag: 'GYM',
     link: '/gym',
   },
   {
-    id: 'gym-nonac', icon: '💪', name: 'Fitness Gym — Non-AC', price: '₹0/year', hours: '5AM – 10PM',
+    id: 'gym-nonac', icon: '💪', name: 'Fitness Gym — Non-AC', price: 'from ₹0/month', hours: '5AM – 10PM',
     desc: 'Train hard in our strength-focused non-AC gym. All the iron you need to build serious muscle.',
     features: ['Strength Training Machines', 'Heavy Free Weights', 'Barbells & Dumbbells', 'Personal Training Available'],
     tag: 'GYM',
@@ -55,8 +55,14 @@ const DEFAULT_PRICING_TABLE = [
   { key: 'badminton_1', facility: 'Badminton Court (any)', price: '₹0/hour', note: '3 synthetic courts · 5AM–11PM' },
   { key: 'turf_weekday', facility: 'Football Turf (Weekday)', price: '₹0/session', note: 'Mon–Fri · Floodlit' },
   { key: 'turf_weekend', facility: 'Football Turf (Weekend)', price: '₹0/session', note: 'Sat–Sun · Floodlit' },
-  { key: 'gym_ac', facility: 'Gym Membership (AC)', price: '₹0/year', note: 'Premium machines · AC hall' },
-  { key: 'gym_nonac', facility: 'Gym Membership (Non-AC)', price: '₹0/year', note: 'Strength zone · Non-AC' },
+  { key: 'gym_ac_monthly', facility: 'Gym AC - Monthly', price: '₹0/month', note: 'Premium machines · AC hall' },
+  { key: 'gym_ac_quarterly', facility: 'Gym AC - Quarterly', price: '₹0/quarter', note: 'Premium machines · AC hall' },
+  { key: 'gym_ac_halfyearly', facility: 'Gym AC - Half-Yearly', price: '₹0/half-year', note: 'Premium machines · AC hall' },
+  { key: 'gym_ac_yearly', facility: 'Gym AC - Yearly', price: '₹0/year', note: 'Premium machines · AC hall' },
+  { key: 'gym_nonac_monthly', facility: 'Gym Non-AC - Monthly', price: '₹0/month', note: 'Strength zone · Non-AC' },
+  { key: 'gym_nonac_quarterly', facility: 'Gym Non-AC - Quarterly', price: '₹0/quarter', note: 'Strength zone · Non-AC' },
+  { key: 'gym_nonac_halfyearly', facility: 'Gym Non-AC - Half-Yearly', price: '₹0/half-year', note: 'Strength zone · Non-AC' },
+  { key: 'gym_nonac_yearly', facility: 'Gym Non-AC - Yearly', price: '₹0/year', note: 'Strength zone · Non-AC' },
   { key: 'badminton_membership', facility: 'Badminton Membership', price: '₹0/month', note: '1 Hour Court Access Per Day' },
   { key: 'total_membership', facility: 'Total Membership', price: '₹0/month', note: 'Full access to Gym (AC/Non-AC) & Badminton courts' },
 ];
@@ -72,11 +78,11 @@ const FacilitiesPage = () => {
         
         // update facilities card prices
         setFacilities(prev => prev.map(f => {
-          if (f.id === 'gym-ac' && data.gym_ac !== undefined) {
-            return { ...f, price: `₹${Number(data.gym_ac).toLocaleString('en-IN')}/year` };
+          if (f.id === 'gym-ac' && data.gym_ac_monthly !== undefined) {
+            return { ...f, price: `from ₹${Number(data.gym_ac_monthly).toLocaleString('en-IN')}/month` };
           }
-          if (f.id === 'gym-nonac' && data.gym_nonac !== undefined) {
-            return { ...f, price: `₹${Number(data.gym_nonac).toLocaleString('en-IN')}/year` };
+          if (f.id === 'gym-nonac' && data.gym_nonac_monthly !== undefined) {
+            return { ...f, price: `from ₹${Number(data.gym_nonac_monthly).toLocaleString('en-IN')}/month` };
           }
           if (f.id === 'turf' && data.turf_weekday !== undefined && data.turf_weekend !== undefined) {
             return { ...f, price: `₹${Number(data.turf_weekday)} (Weekday) / ₹${Number(data.turf_weekend)} (Weekend)` };
@@ -92,8 +98,10 @@ const FacilitiesPage = () => {
           if (data[row.key] !== undefined) {
             let unit = 'session';
             if (row.key === 'badminton_1' || row.key === 'badminton_2' || row.key === 'badminton_3') unit = 'hour';
-            else if (row.key === 'gym_ac' || row.key === 'gym_nonac') unit = 'year';
-            else if (row.key === 'badminton_membership' || row.key === 'total_membership') unit = 'month';
+            else if (row.key.endsWith('_yearly')) unit = 'year';
+            else if (row.key.endsWith('_halfyearly')) unit = 'half-year';
+            else if (row.key.endsWith('_quarterly')) unit = 'quarter';
+            else if (row.key.endsWith('_monthly') || row.key === 'badminton_membership' || row.key === 'total_membership') unit = 'month';
             
             return { ...row, price: `₹${Number(data[row.key]).toLocaleString('en-IN')}/${unit}` };
           }

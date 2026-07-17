@@ -25,8 +25,14 @@ const loadRazorpayScript = () => {
 };
 
 const FACILITY_PRICES_DEFAULT = {
-  gym_ac: { label: 'Fitness Gym (AC)', price: 0, unit: 'year', desc: 'Yearly membership' },
-  gym_nonac: { label: 'Fitness Gym (Non-AC)', price: 0, unit: 'year', desc: 'Yearly membership' },
+  gym_ac_monthly: { label: 'Fitness Gym (AC) - Monthly', price: 0, unit: 'month', desc: 'Monthly membership' },
+  gym_ac_quarterly: { label: 'Fitness Gym (AC) - Quarterly', price: 0, unit: 'quarter', desc: 'Quarterly membership' },
+  gym_ac_halfyearly: { label: 'Fitness Gym (AC) - Half-Yearly', price: 0, unit: 'half-year', desc: 'Half-yearly membership' },
+  gym_ac_yearly: { label: 'Fitness Gym (AC) - Yearly', price: 0, unit: 'year', desc: 'Yearly membership' },
+  gym_nonac_monthly: { label: 'Fitness Gym (Non-AC) - Monthly', price: 0, unit: 'month', desc: 'Monthly membership' },
+  gym_nonac_quarterly: { label: 'Fitness Gym (Non-AC) - Quarterly', price: 0, unit: 'quarter', desc: 'Quarterly membership' },
+  gym_nonac_halfyearly: { label: 'Fitness Gym (Non-AC) - Half-Yearly', price: 0, unit: 'half-year', desc: 'Half-yearly membership' },
+  gym_nonac_yearly: { label: 'Fitness Gym (Non-AC) - Yearly', price: 0, unit: 'year', desc: 'Yearly membership' },
   total_membership: { label: 'Total Membership (Gym + Badminton)', price: 0, unit: 'month', desc: 'Full facility access' },
   badminton_1: { label: 'Badminton Court 1 (New)', price: 0, unit: 'hour', desc: 'Per hour' },
   badminton_2: { label: 'Badminton Court 2 (New)', price: 0, unit: 'hour', desc: 'Per hour' },
@@ -147,8 +153,14 @@ const BookingPage = () => {
   const turfInfo = getTurfPriceInfo(form.date);
 
   const selectOptions = [
-    { value: 'gym_ac', label: `Fitness Gym (AC) — ₹${facilityPrices.gym_ac.price}/year` },
-    { value: 'gym_nonac', label: `Fitness Gym (Non-AC) — ₹${facilityPrices.gym_nonac.price}/year` },
+    { value: 'gym_ac_monthly', label: `Fitness Gym (AC) — Monthly — ₹${facilityPrices.gym_ac_monthly?.price || 0}/month` },
+    { value: 'gym_ac_quarterly', label: `Fitness Gym (AC) — Quarterly — ₹${facilityPrices.gym_ac_quarterly?.price || 0}/quarter` },
+    { value: 'gym_ac_halfyearly', label: `Fitness Gym (AC) — Half-Yearly — ₹${facilityPrices.gym_ac_halfyearly?.price || 0}/half-year` },
+    { value: 'gym_ac_yearly', label: `Fitness Gym (AC) — Yearly — ₹${facilityPrices.gym_ac_yearly?.price || 0}/year` },
+    { value: 'gym_nonac_monthly', label: `Fitness Gym (Non-AC) — Monthly — ₹${facilityPrices.gym_nonac_monthly?.price || 0}/month` },
+    { value: 'gym_nonac_quarterly', label: `Fitness Gym (Non-AC) — Quarterly — ₹${facilityPrices.gym_nonac_quarterly?.price || 0}/quarter` },
+    { value: 'gym_nonac_halfyearly', label: `Fitness Gym (Non-AC) — Half-Yearly — ₹${facilityPrices.gym_nonac_halfyearly?.price || 0}/half-year` },
+    { value: 'gym_nonac_yearly', label: `Fitness Gym (Non-AC) — Yearly — ₹${facilityPrices.gym_nonac_yearly?.price || 0}/year` },
     { value: 'total_membership', label: `Total Membership (Gym + Badminton) — ₹${facilityPrices.total_membership.price}/month` },
     { value: 'badminton_1', label: `Badminton Court 1 (New) — ₹${facilityPrices.badminton_1.price}/hour` },
     { value: 'badminton_2', label: `Badminton Court 2 (New) — ₹${facilityPrices.badminton_2.price}/hour` },

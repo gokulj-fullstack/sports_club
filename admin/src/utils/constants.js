@@ -1,7 +1,12 @@
 export const FACILITY_OPTIONS = [
-  { value: 'gym_ac', label: 'Fitness Gym (AC)' },
-  { value: 'gym_nonac', label: 'Fitness Gym (Non-AC)' },
-  { value: 'gym_monthly', label: 'Fitness Gym (Monthly)' },
+  { value: 'gym_ac_monthly', label: 'Fitness Gym (AC) - Monthly' },
+  { value: 'gym_ac_quarterly', label: 'Fitness Gym (AC) - Quarterly' },
+  { value: 'gym_ac_halfyearly', label: 'Fitness Gym (AC) - Half-Yearly' },
+  { value: 'gym_ac_yearly', label: 'Fitness Gym (AC) - Yearly' },
+  { value: 'gym_nonac_monthly', label: 'Fitness Gym (Non-AC) - Monthly' },
+  { value: 'gym_nonac_quarterly', label: 'Fitness Gym (Non-AC) - Quarterly' },
+  { value: 'gym_nonac_halfyearly', label: 'Fitness Gym (Non-AC) - Half-Yearly' },
+  { value: 'gym_nonac_yearly', label: 'Fitness Gym (Non-AC) - Yearly' },
   { value: 'total_membership', label: 'Total Membership' },
   { value: 'turf_weekday', label: 'Football Turf (Weekday)' },
   { value: 'turf_weekend', label: 'Football Turf (Weekend)' },
@@ -38,9 +43,14 @@ export const MEMBERSHIP_STATUS_OPTIONS = [
 ];
 
 export const MEMBERSHIP_TYPE_OPTIONS = [
-  { value: 'gym_ac', label: 'Gym AC' },
-  { value: 'gym_nonac', label: 'Gym Non-AC' },
-  { value: 'gym_monthly', label: 'Gym Monthly' },
+  { value: 'gym_ac_monthly', label: 'Gym AC - Monthly' },
+  { value: 'gym_ac_quarterly', label: 'Gym AC - Quarterly' },
+  { value: 'gym_ac_halfyearly', label: 'Gym AC - Half-Yearly' },
+  { value: 'gym_ac_yearly', label: 'Gym AC - Yearly' },
+  { value: 'gym_nonac_monthly', label: 'Gym Non-AC - Monthly' },
+  { value: 'gym_nonac_quarterly', label: 'Gym Non-AC - Quarterly' },
+  { value: 'gym_nonac_halfyearly', label: 'Gym Non-AC - Half-Yearly' },
+  { value: 'gym_nonac_yearly', label: 'Gym Non-AC - Yearly' },
   { value: 'total_membership', label: 'Total Membership (All Access)' },
 ];
 

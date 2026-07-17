@@ -167,8 +167,8 @@ def get_facilities(request):
     _ensure_pricing_seeded()
     prices = {s.key: int(s.price) for s in PricingSetting.objects.all()}
     
-    gym_ac = prices.get('gym_ac', 6000)
-    gym_nonac = prices.get('gym_nonac', 4500)
+    gym_ac_mo = prices.get('gym_ac_monthly', 1000)
+    gym_nonac_mo = prices.get('gym_nonac_monthly', 800)
     turf_weekday = prices.get('turf_weekday', 700)
     turf_weekend = prices.get('turf_weekend', 1000)
     badminton = prices.get('badminton_1', 300)
@@ -178,7 +178,7 @@ def get_facilities(request):
             "id": "gym",
             "name": "Fitness Gym",
             "description": "State-of-the-art equipment with certified personal trainers. Choose between AC or Non-AC facilities.",
-            "price": f"AC: ₹{gym_ac}/yr | Non-AC: ₹{gym_nonac}/yr",
+            "price": f"AC: from ₹{gym_ac_mo}/mo | Non-AC: from ₹{gym_nonac_mo}/mo",
             "hours": "5:00 AM - 10:00 PM",
             "features": ["Cardio & Strength Machines", "AC & Non-AC Gym Access", "Personal Training Available", "Towel Service"]
         },
@@ -314,8 +314,14 @@ def get_pricing_settings(request):
 def _ensure_pricing_seeded():
     if not PricingSetting.objects.exists():
         DEFAULT_PRICES = [
-            {'key': 'gym_ac', 'label': 'Fitness Gym (AC)', 'price': 6000.00, 'category': 'membership'},
-            {'key': 'gym_nonac', 'label': 'Fitness Gym (Non-AC)', 'price': 4500.00, 'category': 'membership'},
+            {'key': 'gym_ac_monthly', 'label': 'Fitness Gym (AC) - Monthly', 'price': 1000.00, 'category': 'membership'},
+            {'key': 'gym_ac_quarterly', 'label': 'Fitness Gym (AC) - Quarterly', 'price': 2500.00, 'category': 'membership'},
+            {'key': 'gym_ac_halfyearly', 'label': 'Fitness Gym (AC) - Half-Yearly', 'price': 4000.00, 'category': 'membership'},
+            {'key': 'gym_ac_yearly', 'label': 'Fitness Gym (AC) - Yearly', 'price': 6000.00, 'category': 'membership'},
+            {'key': 'gym_nonac_monthly', 'label': 'Fitness Gym (Non-AC) - Monthly', 'price': 800.00, 'category': 'membership'},
+            {'key': 'gym_nonac_quarterly', 'label': 'Fitness Gym (Non-AC) - Quarterly', 'price': 2000.00, 'category': 'membership'},
+            {'key': 'gym_nonac_halfyearly', 'label': 'Fitness Gym (Non-AC) - Half-Yearly', 'price': 3000.00, 'category': 'membership'},
+            {'key': 'gym_nonac_yearly', 'label': 'Fitness Gym (Non-AC) - Yearly', 'price': 4500.00, 'category': 'membership'},
             {'key': 'badminton_membership', 'label': 'Badminton Membership', 'price': 1000.00, 'category': 'membership'},
             {'key': 'total_membership', 'label': 'Total Membership (Gym + Badminton)', 'price': 3000.00, 'category': 'membership'},
             {'key': 'badminton_1', 'label': 'Badminton Court 1', 'price': 300.00, 'category': 'booking'},
