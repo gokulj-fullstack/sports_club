@@ -8,6 +8,7 @@ admin_router.register(r'bookings', admin_views.BookingAdminViewSet, basename='ad
 admin_router.register(r'slots', admin_views.SlotViewSet, basename='admin-slots')
 admin_router.register(r'members', admin_views.MemberViewSet, basename='admin-members')
 admin_router.register(r'payments', admin_views.PaymentViewSet, basename='admin-payments')
+admin_router.register(r'pricing', admin_views.PricingSettingViewSet, basename='admin-pricing')
 
 urlpatterns = [
     # ── Public site endpoints ──
@@ -17,6 +18,7 @@ urlpatterns = [
     path('bookings/load/', views.get_facility_load, name='get_facility_load'),
     path('contact/', views.contact, name='contact'),
     path('facilities/', views.get_facilities, name='get_facilities'),
+    path('pricing/', views.get_pricing_settings, name='get_pricing_settings'),
 
     # ── Admin dashboard endpoints ──
     path('admin/stats/dashboard/', admin_views.dashboard_stats, name='admin_dashboard_stats'),

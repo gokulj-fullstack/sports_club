@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Booking, ContactMessage, Slot, Member, Payment
+from .models import Booking, ContactMessage, Slot, Member, Payment, PricingSetting
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -78,3 +78,10 @@ class PaymentSerializer(serializers.ModelSerializer):
             'id', 'booking', 'member', 'customer_name', 'amount', 'method',
             'method_display', 'status', 'status_display', 'transaction_id', 'created_at',
         ]
+
+
+class PricingSettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PricingSetting
+        fields = ['id', 'key', 'label', 'price', 'category']
+

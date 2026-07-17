@@ -1,16 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import SplitText from '../components/SplitText';
 
-const plans = [
-  { name: 'GYM AC', price: '₹6,000', period: '/year', popular: false, features: ['Cardio & Strength Machines', 'AC Environment', 'Personal Training Available', '5AM – 10PM Access', 'Towel Service'], cta: 'Get Started' },
-  { name: 'GYM NON-AC', price: '₹4,500', period: '/year', popular: false, features: ['Strength Training Machines', 'Non-AC Facility', 'Personal Training Available', '5AM – 10PM Access', 'Heavy Free Weights'], cta: 'Get Started' },
-  { name: 'BADMINTON', price: '₹1,000', period: '/month', popular: false, features: ['1 Hour Court Access Per Day', '3 Synthetic Courts', 'Equipment Rental Discounts', 'Coaching Available', '5AM – 11PM Access', 'Priority Booking'], cta: 'Get Started' },
-  { name: 'TOTAL MEMBERSHIP', price: '₹3,000', period: '/month', popular: true, features: ['Full Gym Access (AC & Non-AC)', 'Unlimited Badminton Courts', 'Turf Bookings (Special Rates)', 'Priority Reservations', 'Guest Passes (2/month)', 'Personal Coaching Sessions', 'Nutrition Consultation'], cta: 'Contact Us' },
+const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+
+const DEFAULT_PLANS = [
+  { key: 'gym_ac', name: 'GYM AC', price: 0, period: '/year', popular: false, features: ['Cardio & Strength Machines', 'AC Environment', 'Personal Training Available', '5AM – 10PM Access', 'Towel Service'], cta: 'Get Started' },
+  { key: 'gym_nonac', name: 'GYM NON-AC', price: 0, period: '/year', popular: false, features: ['Strength Training Machines', 'Non-AC Facility', 'Personal Training Available', '5AM – 10PM Access', 'Heavy Free Weights'], cta: 'Get Started' },
+  { key: 'badminton_membership', name: 'BADMINTON', price: 0, period: '/month', popular: false, features: ['1 Hour Court Access Per Day', '3 Synthetic Courts', 'Equipment Rental Discounts', 'Coaching Available', '5AM – 11PM Access', 'Priority Booking'], cta: 'Get Started' },
+  { key: 'total_membership', name: 'TOTAL MEMBERSHIP', price: 0, period: '/month', popular: true, features: ['Full Gym Access (AC & Non-AC)', 'Unlimited Badminton Courts', 'Turf Bookings (Special Rates)', 'Priority Reservations', 'Guest Passes (2/month)', 'Personal Coaching Sessions', 'Nutrition Consultation'], cta: 'Contact Us' },
 ];
 
-const MembershipPage = () => (
+const MembershipPage = () => {
+  const [plans, setPlans] = useState(DEFAULT_PLANS);
+
+  useEffect(() => {
+    axios.get(`${API}/pricing/`)
+      .then(res => {
+        const data = res.data;
+        setPlans(prev => prev.map(p => {
+          if (data[p.key] !== undefined) {
+            return { ...p, price: data[p.key] };
+          }
+          return p;
+        }));
+      })
+      .catch(err => console.error("Error fetching membership prices:", err));
+  }, []);
+
+  return (
   <>
     {/* HERO */}
     <section style={{ paddingTop: '8rem', paddingBottom: '4rem', background: 'var(--bg)', borderBottom: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
@@ -124,6 +144,7 @@ const MembershipPage = () => (
       </div>
     </section>
   </>
-);
+  );
+};
 
 export default MembershipPage;

@@ -60,6 +60,31 @@ class Booking(models.Model):
     def __str__(self):
         return f"{self.name} - {self.facility} on {self.date}"
 
+    def save(self, *args, **kwargs):
+        if not self.amount or self.amount == 0:
+            try:
+                setting = PricingSetting.objects.get(key=self.facility)
+                base_price = setting.price
+            except Exception:
+                defaults = {
+                    'gym_ac': 6000,
+                    'gym_nonac': 4500,
+                    'total_membership': 3000,
+                    'badminton_1': 300,
+                    'badminton_2': 300,
+                    'badminton_3': 300,
+                    'turf_weekday': 700,
+                    'turf_weekend': 1000,
+                }
+                base_price = defaults.get(self.facility, 0)
+            
+            if self.facility in ['badminton_1', 'badminton_2', 'badminton_3', 'turf_weekday', 'turf_weekend']:
+                self.amount = base_price * (self.hours or 1)
+            else:
+                self.amount = base_price
+        super().save(*args, **kwargs)
+
+
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
@@ -169,4 +194,18 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"{self.customer_name} - ₹{self.amount} ({self.status})"
+
+
+class PricingSetting(models.Model):
+    key = models.CharField(max_length=50, unique=True)
+    label = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, validators=[MinValueValidator(0)])
+    category = models.CharField(max_length=20, default='booking') # 'booking', 'membership'
+
+    class Meta:
+        ordering = ['category', 'key']
+
+    def __str__(self):
+        return f"{self.label} ({self.key}): ₹{self.price}"
+
 

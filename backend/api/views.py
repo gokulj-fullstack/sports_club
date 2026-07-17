@@ -8,8 +8,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import Booking, ContactMessage
-from .serializers import BookingSerializer, ContactMessageSerializer
+from .models import Booking, ContactMessage, PricingSetting
+from .serializers import BookingSerializer, ContactMessageSerializer, PricingSettingSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -164,12 +164,21 @@ Sent via King Sports Club website contact form.
 
 @api_view(['GET'])
 def get_facilities(request):
+    _ensure_pricing_seeded()
+    prices = {s.key: int(s.price) for s in PricingSetting.objects.all()}
+    
+    gym_ac = prices.get('gym_ac', 6000)
+    gym_nonac = prices.get('gym_nonac', 4500)
+    turf_weekday = prices.get('turf_weekday', 700)
+    turf_weekend = prices.get('turf_weekend', 1000)
+    badminton = prices.get('badminton_1', 300)
+
     facilities = [
         {
             "id": "gym",
             "name": "Fitness Gym",
             "description": "State-of-the-art equipment with certified personal trainers. Choose between AC or Non-AC facilities.",
-            "price": "AC: ₹6000/yr | Non-AC: ₹4500/yr",
+            "price": f"AC: ₹{gym_ac}/yr | Non-AC: ₹{gym_nonac}/yr",
             "hours": "5:00 AM - 10:00 PM",
             "features": ["Cardio & Strength Machines", "AC & Non-AC Gym Access", "Personal Training Available", "Towel Service"]
         },
@@ -177,7 +186,7 @@ def get_facilities(request):
             "id": "turf",
             "name": "Football Turf",
             "description": "Professional synthetic turf for football & cricket. Perfect for tournaments, practice, and casual matches.",
-            "price": "₹700 (Weekdays) / ₹1000 (Weekends)",
+            "price": f"₹{turf_weekday} (Weekdays) / ₹{turf_weekend} (Weekends)",
             "hours": "6:00 AM - 11:00 PM",
             "features": ["FIFA Quality Turf", "Floodlights", "Changing Rooms", "Score Board"]
         },
@@ -185,7 +194,7 @@ def get_facilities(request):
             "id": "badminton",
             "name": "Badminton Courts",
             "description": "Three professional badminton courts - One old court and two new courts with wooden sprung flooring. Ideal for club play, coaching, and tournaments.",
-            "price": "₹300/hour",
+            "price": f"₹{badminton}/hour",
             "hours": "5:00 AM - 11:00 PM",
             "features": ["1 Old Court", "2 New Courts", "Wooden Flooring", "Professional Nets", "Equipment Rental"]
         }
@@ -277,3 +286,29 @@ def get_facility_load(request):
             'status': load_status(badminton_count, total_slots * 3),  # 3 courts
         },
     })
+
+
+@api_view(['GET'])
+def get_pricing_settings(request):
+    _ensure_pricing_seeded()
+    settings = PricingSetting.objects.all()
+    data = {s.key: float(s.price) for s in settings}
+    return Response(data)
+
+
+def _ensure_pricing_seeded():
+    if not PricingSetting.objects.exists():
+        DEFAULT_PRICES = [
+            {'key': 'gym_ac', 'label': 'Fitness Gym (AC)', 'price': 6000.00, 'category': 'membership'},
+            {'key': 'gym_nonac', 'label': 'Fitness Gym (Non-AC)', 'price': 4500.00, 'category': 'membership'},
+            {'key': 'badminton_membership', 'label': 'Badminton Membership', 'price': 1000.00, 'category': 'membership'},
+            {'key': 'total_membership', 'label': 'Total Membership (Gym + Badminton)', 'price': 3000.00, 'category': 'membership'},
+            {'key': 'badminton_1', 'label': 'Badminton Court 1', 'price': 300.00, 'category': 'booking'},
+            {'key': 'badminton_2', 'label': 'Badminton Court 2', 'price': 300.00, 'category': 'booking'},
+            {'key': 'badminton_3', 'label': 'Badminton Court 3', 'price': 300.00, 'category': 'booking'},
+            {'key': 'turf_weekday', 'label': 'Football Turf (Weekday)', 'price': 700.00, 'category': 'booking'},
+            {'key': 'turf_weekend', 'label': 'Football Turf (Weekend)', 'price': 1000.00, 'category': 'booking'},
+        ]
+        for item in DEFAULT_PRICES:
+            PricingSetting.objects.create(**item)
+

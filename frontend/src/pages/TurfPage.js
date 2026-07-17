@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import SplitText from '../components/SplitText';
 
 /* ─────────────────────────────────────────────
@@ -190,7 +191,23 @@ const TurfIllustration = () => (
   </div>
 );
 
-const TurfPage = () => (
+const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+
+const TurfPage = () => {
+  const [weekdayPrice, setWeekdayPrice] = useState(0);
+  const [weekendPrice, setWeekendPrice] = useState(0);
+
+  useEffect(() => {
+    axios.get(`${API}/pricing/`)
+      .then(res => {
+        const data = res.data;
+        if (data.turf_weekday !== undefined) setWeekdayPrice(Number(data.turf_weekday));
+        if (data.turf_weekend !== undefined) setWeekendPrice(Number(data.turf_weekend));
+      })
+      .catch(err => console.error("Error fetching turf prices:", err));
+  }, []);
+
+  return (
   <>
     {/* HERO */}
     <section style={{ paddingTop: '8rem', paddingBottom: '3rem', background: 'var(--bg)', borderBottom: '1px solid rgba(201,168,76,0.12)', position: 'relative', overflow: 'hidden' }}>
@@ -211,8 +228,8 @@ const TurfPage = () => (
         <div style={{ display: 'flex', gap: '1.5rem', marginTop: '2.5rem', flexWrap: 'wrap' }}>
           {[
             { val: '1', label: 'Full-Size Turf' },
-            { val: '₹700', label: 'Weekday / Session' },
-            { val: '₹1,000', label: 'Weekend / Session' },
+            { val: `₹${weekdayPrice.toLocaleString('en-IN')}`, label: 'Weekday / Session' },
+            { val: `₹${weekendPrice.toLocaleString('en-IN')}`, label: 'Weekend / Session' },
             { val: '17hrs', label: 'Open Daily' },
           ].map((s, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 * i + 0.3 }}
@@ -258,16 +275,16 @@ const TurfPage = () => (
               color: 'var(--gold)', borderColor: 'rgba(201,168,76,0.3)',
               desc: 'Full-size synthetic football pitch with FIFA-standard markings — penalty areas, centre circle, goal arcs, and corner arcs. Professional goal posts installed.',
               features: ['FIFA-standard pitch markings', 'Full-size goal posts (both ends)', 'Penalty spot & arcs marked', 'Centre circle & halfway line', 'Supports 5-a-side to 11-a-side', 'Suitable for tournaments'],
-              price: '₹700/session', priceNote: 'Weekday',
-              price2: '₹1,000/session', priceNote2: 'Weekend',
+              price: `₹${weekdayPrice.toLocaleString('en-IN')}/session`, priceNote: 'Weekday',
+              price2: `₹${weekendPrice.toLocaleString('en-IN')}/session`, priceNote2: 'Weekend',
             },
             {
               icon: '🏏', sport: 'CRICKET', badge: 'MULTI-SPORT',
               color: '#52b788', borderColor: 'rgba(82,183,136,0.3)',
               desc: 'The turf doubles as a cricket ground with crease markings. Ideal for practice nets, batting drills, and friendly T20 matches with synthetic surface play.',
               features: ['Batting & bowling crease lines', 'Synthetic pitch strip', 'Ideal for batting practice', 'T20 & box cricket format', 'Rubber ball & hard ball play', 'Available on advance booking'],
-              price: '₹700/session', priceNote: 'Weekday',
-              price2: '₹1,000/session', priceNote2: 'Weekend',
+              price: `₹${weekdayPrice.toLocaleString('en-IN')}/session`, priceNote: 'Weekday',
+              price2: `₹${weekendPrice.toLocaleString('en-IN')}/session`, priceNote2: 'Weekend',
             },
             {
               icon: '🏢', sport: 'CORPORATE & EVENTS', badge: 'BOOKINGS',
@@ -402,6 +419,7 @@ const TurfPage = () => (
       section .container > div[style*="grid-template-columns: repeat(auto-fit, minmax(300px"] { grid-template-columns: 1fr !important; }
     }`}</style>
   </>
-);
+  );
+};
 
 export default TurfPage;

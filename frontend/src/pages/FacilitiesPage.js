@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import SplitText from '../components/SplitText';
+
+const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
 const PageHero = ({ label, titleWord1, titleWord2, sub }) => (
   <section style={{ paddingTop: '8rem', paddingBottom: '4rem', background: 'var(--bg)', borderBottom: '1px solid rgba(201,168,76,0.12)', position: 'relative', overflow: 'hidden' }}>
@@ -17,30 +20,30 @@ const PageHero = ({ label, titleWord1, titleWord2, sub }) => (
   </section>
 );
 
-const facilities = [
+const DEFAULT_FACILITIES = [
   {
-    id: 'gym-ac', icon: '🏋️', name: 'Fitness Gym — AC', price: '₹6,000/year', hours: '5AM – 10PM',
+    id: 'gym-ac', icon: '🏋️', name: 'Fitness Gym — AC', price: '₹0/year', hours: '5AM – 10PM',
     desc: 'Beat the heat while you train. Our air-conditioned gym floor features premium cardio machines, weight stations, and free weights.',
     features: ['Premium Cardio Machines', 'Weight Stations', 'Free Weights Area', 'Personal Training Available', 'AC Environment'],
     tag: 'GYM',
     link: '/gym',
   },
   {
-    id: 'gym-nonac', icon: '💪', name: 'Fitness Gym — Non-AC', price: '₹4,500/year', hours: '5AM – 10PM',
+    id: 'gym-nonac', icon: '💪', name: 'Fitness Gym — Non-AC', price: '₹0/year', hours: '5AM – 10PM',
     desc: 'Train hard in our strength-focused non-AC gym. All the iron you need to build serious muscle.',
     features: ['Strength Training Machines', 'Heavy Free Weights', 'Barbells & Dumbbells', 'Personal Training Available'],
     tag: 'GYM',
     link: '/gym',
   },
   {
-    id: 'turf', icon: '⚽', name: 'Football Turf', price: '₹700 (Weekday) / ₹1000 (Weekend)', hours: '6AM – 11PM',
+    id: 'turf', icon: '⚽', name: 'Football Turf', price: '₹0 (Weekday) / ₹0 (Weekend)', hours: '6AM – 11PM',
     desc: 'FIFA-quality synthetic turf for football and cricket. Bright floodlights for night matches, changing rooms, and scoreboard.',
     features: ['FIFA Quality Synthetic Turf', 'Floodlit for Night Matches', 'Changing Rooms', 'Scoreboard', 'Goal Posts', 'Suitable for Cricket'],
     tag: 'TURF',
     link: '/turf',
   },
   {
-    id: 'badminton', icon: '🏸', name: '3 Synthetic Badminton Courts', price: '₹300/hour per court', hours: '5AM – 11PM',
+    id: 'badminton', icon: '🏸', name: '3 Synthetic Badminton Courts', price: '₹0/hour per court', hours: '5AM – 11PM',
     desc: 'All three courts feature premium synthetic surface. Two courts on the left block, one standalone court on the right block — street in between. Perfect for casual play, coaching, and tournaments.',
     features: ['All 3 Courts Synthetic Surface', 'Left Block: Courts 1 & 2', 'Right Block: Court 3', 'Professional Nets & Lines', 'Equipment Rental', 'Coaching Available', 'Tournament Hosting'],
     tag: 'BADMINTON',
@@ -48,7 +51,59 @@ const facilities = [
   },
 ];
 
-const FacilitiesPage = () => (
+const DEFAULT_PRICING_TABLE = [
+  { key: 'badminton_1', facility: 'Badminton Court (any)', price: '₹0/hour', note: '3 synthetic courts · 5AM–11PM' },
+  { key: 'turf_weekday', facility: 'Football Turf (Weekday)', price: '₹0/session', note: 'Mon–Fri · Floodlit' },
+  { key: 'turf_weekend', facility: 'Football Turf (Weekend)', price: '₹0/session', note: 'Sat–Sun · Floodlit' },
+  { key: 'gym_ac', facility: 'Gym Membership (AC)', price: '₹0/year', note: 'Premium machines · AC hall' },
+  { key: 'gym_nonac', facility: 'Gym Membership (Non-AC)', price: '₹0/year', note: 'Strength zone · Non-AC' },
+  { key: 'badminton_membership', facility: 'Badminton Membership', price: '₹0/month', note: '1 Hour Court Access Per Day' },
+  { key: 'total_membership', facility: 'Total Membership', price: '₹0/month', note: 'Full access to Gym (AC/Non-AC) & Badminton courts' },
+];
+
+const FacilitiesPage = () => {
+  const [facilities, setFacilities] = useState(DEFAULT_FACILITIES);
+  const [pricingTable, setPricingTable] = useState(DEFAULT_PRICING_TABLE);
+
+  useEffect(() => {
+    axios.get(`${API}/pricing/`)
+      .then(res => {
+        const data = res.data;
+        
+        // update facilities card prices
+        setFacilities(prev => prev.map(f => {
+          if (f.id === 'gym-ac' && data.gym_ac !== undefined) {
+            return { ...f, price: `₹${Number(data.gym_ac).toLocaleString('en-IN')}/year` };
+          }
+          if (f.id === 'gym-nonac' && data.gym_nonac !== undefined) {
+            return { ...f, price: `₹${Number(data.gym_nonac).toLocaleString('en-IN')}/year` };
+          }
+          if (f.id === 'turf' && data.turf_weekday !== undefined && data.turf_weekend !== undefined) {
+            return { ...f, price: `₹${Number(data.turf_weekday)} (Weekday) / ₹${Number(data.turf_weekend)} (Weekend)` };
+          }
+          if (f.id === 'badminton' && data.badminton_1 !== undefined) {
+            return { ...f, price: `₹${Number(data.badminton_1)}/hour per court` };
+          }
+          return f;
+        }));
+
+        // update pricing table
+        setPricingTable(prev => prev.map(row => {
+          if (data[row.key] !== undefined) {
+            let unit = 'session';
+            if (row.key === 'badminton_1' || row.key === 'badminton_2' || row.key === 'badminton_3') unit = 'hour';
+            else if (row.key === 'gym_ac' || row.key === 'gym_nonac') unit = 'year';
+            else if (row.key === 'badminton_membership' || row.key === 'total_membership') unit = 'month';
+            
+            return { ...row, price: `₹${Number(data[row.key]).toLocaleString('en-IN')}/${unit}` };
+          }
+          return row;
+        }));
+      })
+      .catch(err => console.error("Error fetching facilities prices:", err));
+  }, []);
+
+  return (
   <>
     <PageHero label="What We Offer" titleWord1="WORLD-CLASS" titleWord2="FACILITIES"
       sub="Four premium sporting spaces under one roof — and one across the street. Train, compete, and push your limits at King Sports Club, Padappai." />
@@ -135,15 +190,7 @@ const FacilitiesPage = () => (
         <h2 className="section-title" style={{ marginBottom: '2.5rem' }}>PRICING <span className="gold-text">SUMMARY</span></h2>
         <div style={{ background: 'linear-gradient(145deg, var(--bg-card), var(--bg-alt))', border: '1px solid rgba(201,168,76,0.15)', overflow: 'hidden' }}>
           <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
-          {[
-            { facility: 'Badminton Court (any)', price: '₹300/hour', note: '3 synthetic courts · 5AM–11PM' },
-            { facility: 'Football Turf (Weekday)', price: '₹700/session', note: 'Mon–Fri · Floodlit' },
-            { facility: 'Football Turf (Weekend)', price: '₹1,000/session', note: 'Sat–Sun · Floodlit' },
-            { facility: 'Gym Membership (AC)', price: '₹6,000/year', note: 'Premium machines · AC hall' },
-            { facility: 'Gym Membership (Non-AC)', price: '₹4,500/year', note: 'Strength zone · Non-AC' },
-            { facility: 'Badminton Membership', price: '₹1,000/month', note: '1 Hour Court Access Per Day' },
-            { facility: 'Total Membership', price: '₹3,000/month', note: 'Full access to Gym (AC/Non-AC) & Badminton courts' },
-          ].map((row, i) => (
+          {pricingTable.map((row, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 2rem', borderBottom: i < 6 ? '1px solid var(--border-sub)' : 'none', flexWrap: 'wrap', gap: '0.5rem' }}>
               <div>
                 <div style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.95rem', color: 'var(--text)' }}>{row.facility}</div>
@@ -160,6 +207,7 @@ const FacilitiesPage = () => (
       </div>
     </section>
   </>
-);
+  );
+};
 
 export default FacilitiesPage;

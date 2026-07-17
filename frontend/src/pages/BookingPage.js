@@ -24,13 +24,15 @@ const loadRazorpayScript = () => {
   });
 };
 
-const FACILITY_PRICES = {
-  gym_ac: { label: 'Fitness Gym (AC)', price: 6000, unit: 'year', desc: 'Yearly membership' },
-  gym_nonac: { label: 'Fitness Gym (Non-AC)', price: 4500, unit: 'year', desc: 'Yearly membership' },
-  total_membership: { label: 'Total Membership (Gym + Badminton)', price: 3000, unit: 'month', desc: 'Full facility access' },
-  badminton_1: { label: 'Badminton Court 1 (New)', price: 300, unit: 'hour', desc: 'Per hour' },
-  badminton_2: { label: 'Badminton Court 2 (New)', price: 300, unit: 'hour', desc: 'Per hour' },
-  badminton_3: { label: 'Badminton Court 3 (Classic)', price: 300, unit: 'hour', desc: 'Per hour' },
+const FACILITY_PRICES_DEFAULT = {
+  gym_ac: { label: 'Fitness Gym (AC)', price: 0, unit: 'year', desc: 'Yearly membership' },
+  gym_nonac: { label: 'Fitness Gym (Non-AC)', price: 0, unit: 'year', desc: 'Yearly membership' },
+  total_membership: { label: 'Total Membership (Gym + Badminton)', price: 0, unit: 'month', desc: 'Full facility access' },
+  badminton_1: { label: 'Badminton Court 1 (New)', price: 0, unit: 'hour', desc: 'Per hour' },
+  badminton_2: { label: 'Badminton Court 2 (New)', price: 0, unit: 'hour', desc: 'Per hour' },
+  badminton_3: { label: 'Badminton Court 3 (Classic)', price: 0, unit: 'hour', desc: 'Per hour' },
+  turf_weekday: { label: 'Football Turf (Weekday)', price: 0, unit: 'session', desc: 'Per session' },
+  turf_weekend: { label: 'Football Turf (Weekend)', price: 0, unit: 'session', desc: 'Per session' },
 };
 
 const timeSlots = ['5:00 AM','6:00 AM','7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM'];
@@ -56,8 +58,26 @@ const BookingPage = () => {
   const [paymentDone, setPaymentDone] = useState(false);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
+  const [facilityPrices, setFacilityPrices] = useState(FACILITY_PRICES_DEFAULT);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    axios.get(`${API}/pricing/`)
+      .then(res => {
+        const data = res.data;
+        setFacilityPrices(prev => {
+          const updated = { ...prev };
+          Object.keys(data).forEach(key => {
+            if (updated[key]) {
+              updated[key].price = Number(data[key]);
+            }
+          });
+          return updated;
+        });
+      })
+      .catch(err => console.error("Error fetching prices:", err));
+  }, []);
 
   useEffect(() => {
     if (location.state?.bookingData) {
@@ -93,13 +113,15 @@ const BookingPage = () => {
   }, [form.facility, form.date]);
 
   const getTurfPriceInfo = (dateStr) => {
-    if (!dateStr) return { price: 700, label: 'Football Turf (Weekday: ₹700 / Weekend: ₹1000)' };
+    const weekdayPrice = facilityPrices.turf_weekday?.price || 0;
+    const weekendPrice = facilityPrices.turf_weekend?.price || 0;
+    if (!dateStr) return { price: weekdayPrice, label: `Football Turf (Weekday: ₹${weekdayPrice} / Weekend: ₹${weekendPrice})` };
     const dateObj = new Date(dateStr);
     const day = dateObj.getDay();
     const isWeekend = (day === 0 || day === 6);
     return isWeekend
-      ? { price: 1000, label: 'Football Turf (Weekend) — ₹1000/session' }
-      : { price: 700, label: 'Football Turf (Weekday) — ₹700/session' };
+      ? { price: weekendPrice, label: `Football Turf (Weekend) — ₹${weekendPrice}/session` }
+      : { price: weekdayPrice, label: `Football Turf (Weekday) — ₹${weekdayPrice}/session` };
   };
 
   const getSelectedFacility = () => {
@@ -112,7 +134,7 @@ const BookingPage = () => {
         desc: 'Per session'
       };
     }
-    return FACILITY_PRICES[form.facility];
+    return facilityPrices[form.facility];
   };
 
   const selectedFacility = getSelectedFacility();
@@ -125,12 +147,12 @@ const BookingPage = () => {
   const turfInfo = getTurfPriceInfo(form.date);
 
   const selectOptions = [
-    { value: 'gym_ac', label: 'Fitness Gym (AC) — ₹6000/year' },
-    { value: 'gym_nonac', label: 'Fitness Gym (Non-AC) — ₹4500/year' },
-    { value: 'total_membership', label: 'Total Membership (Gym + Badminton) — ₹3000/month' },
-    { value: 'badminton_1', label: 'Badminton Court 1 (New) — ₹300/hour' },
-    { value: 'badminton_2', label: 'Badminton Court 2 (New) — ₹300/hour' },
-    { value: 'badminton_3', label: 'Badminton Court 3 (Classic) — ₹300/hour' },
+    { value: 'gym_ac', label: `Fitness Gym (AC) — ₹${facilityPrices.gym_ac.price}/year` },
+    { value: 'gym_nonac', label: `Fitness Gym (Non-AC) — ₹${facilityPrices.gym_nonac.price}/year` },
+    { value: 'total_membership', label: `Total Membership (Gym + Badminton) — ₹${facilityPrices.total_membership.price}/month` },
+    { value: 'badminton_1', label: `Badminton Court 1 (New) — ₹${facilityPrices.badminton_1.price}/hour` },
+    { value: 'badminton_2', label: `Badminton Court 2 (New) — ₹${facilityPrices.badminton_2.price}/hour` },
+    { value: 'badminton_3', label: `Badminton Court 3 (Classic) — ₹${facilityPrices.badminton_3.price}/hour` },
     { value: 'turf', label: turfInfo.label },
   ];
 

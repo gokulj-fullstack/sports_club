@@ -15,9 +15,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
-from .models import Booking, Slot, Member, Payment
+from .models import Booking, Slot, Member, Payment, PricingSetting
 from .serializers import (
     BookingAdminSerializer, SlotSerializer, MemberSerializer, PaymentSerializer,
+    PricingSettingSerializer,
 )
 
 ADMIN_PERMISSIONS = [IsAuthenticated, IsAdminUser]
@@ -127,6 +128,21 @@ class PaymentViewSet(viewsets.ModelViewSet):
         if method:
             qs = qs.filter(method=method)
         return qs
+
+
+class PricingSettingViewSet(viewsets.ModelViewSet):
+    """CRUD for global pricing settings (bookings and memberships)."""
+    queryset = PricingSetting.objects.all()
+    serializer_class = PricingSettingSerializer
+    permission_classes = ADMIN_PERMISSIONS
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        category = self.request.query_params.get('category')
+        if category:
+            qs = qs.filter(category=category)
+        return qs
+
 
 
 # ─────────────────────────── Dashboard stats ────────────────────────────
