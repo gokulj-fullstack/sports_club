@@ -11,7 +11,7 @@ from decimal import Decimal
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from rest_framework import viewsets, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
@@ -162,6 +162,14 @@ class UserAccountViewSet(viewsets.ModelViewSet):
                 Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search)
             )
         return qs
+
+    @action(detail=True, methods=['post'], url_path='verify')
+    def verify(self, request, pk=None):
+        """Mark this user's email as verified."""
+        user = self.get_object()
+        user.is_email_verified = True
+        user.save(update_fields=['is_email_verified'])
+        return Response({'status': 'verified', 'email': user.email})
 
 
 # ─────────────────────────── Dashboard stats ────────────────────────────
