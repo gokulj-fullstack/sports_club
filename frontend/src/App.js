@@ -5,17 +5,16 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Logo from './components/Logo';
 
-// Route-based code splitting — each page loads only when navigated to
-const HomePage       = lazy(() => import('./pages/HomePage'));
-const FacilitiesPage = lazy(() => import('./pages/FacilitiesPage'));
-const BadmintonPage  = lazy(() => import('./pages/BadmintonPage'));
-const MembershipPage = lazy(() => import('./pages/MembershipPage'));
-const BookingPage    = lazy(() => import('./pages/BookingPage'));
-const ContactPage    = lazy(() => import('./pages/ContactPage'));
-const GymPage        = lazy(() => import('./pages/GymPage'));
-const TurfPage       = lazy(() => import('./pages/TurfPage'));
-const Login          = lazy(() => import('./components/auth/Login'));
-const Register       = lazy(() => import('./components/auth/Register'));
+import HomePage from './pages/HomePage';
+import FacilitiesPage from './pages/FacilitiesPage';
+import BadmintonPage from './pages/BadmintonPage';
+import MembershipPage from './pages/MembershipPage';
+import BookingPage from './pages/BookingPage';
+import ContactPage from './pages/ContactPage';
+import GymPage from './pages/GymPage';
+import TurfPage from './pages/TurfPage';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 
 import './index.css';
 
@@ -64,7 +63,7 @@ const ScrollToTopButton = () => {
 };
 
 const Loader = ({ onDone }) => {
-  useEffect(() => { const t = setTimeout(onDone, 2200); return () => clearTimeout(t); }, [onDone]);
+  useEffect(() => { const t = setTimeout(onDone, 800); return () => clearTimeout(t); }, [onDone]);
   return (
     <motion.div exit={{ opacity: 0, scale: 1.05 }} transition={{ duration: 0.6 }}
       style={{ position: 'fixed', inset: 0, background: 'var(--bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>

@@ -9,9 +9,21 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileArenasOpen, setMobileArenasOpen] = useState(false);
 
+  const [scrolled, setScrolled] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const arenasRef = useRef(null);
+
+  // Scroll listener to toggle transparent/blur header background
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -77,7 +89,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="simple-nav-container">
+      <div className={`simple-nav-container ${scrolled ? 'simple-nav-scrolled' : ''}`}>
         <nav className="simple-nav">
           {/* Logo */}
           <Link to="/" className="simple-nav-logo">

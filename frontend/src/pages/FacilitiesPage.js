@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import SplitText from '../components/SplitText';
@@ -51,30 +51,37 @@ const DEFAULT_FACILITIES = [
   },
 ];
 
-const DEFAULT_PRICING_TABLE = [
-  { key: 'badminton_1', facility: 'Badminton Court (any)', price: '₹0/hour', note: '3 synthetic courts · 5AM–11PM' },
-  { key: 'turf_weekday', facility: 'Football Turf (Weekday)', price: '₹0/session', note: 'Mon–Fri · Floodlit' },
-  { key: 'turf_weekend', facility: 'Football Turf (Weekend)', price: '₹0/session', note: 'Sat–Sun · Floodlit' },
-  { key: 'gym_ac_monthly', facility: 'Gym AC - Monthly', price: '₹0/month', note: 'Premium machines · AC hall' },
-  { key: 'gym_ac_quarterly', facility: 'Gym AC - Quarterly', price: '₹0/quarter', note: 'Premium machines · AC hall' },
-  { key: 'gym_ac_halfyearly', facility: 'Gym AC - Half-Yearly', price: '₹0/half-year', note: 'Premium machines · AC hall' },
-  { key: 'gym_ac_yearly', facility: 'Gym AC - Yearly', price: '₹0/year', note: 'Premium machines · AC hall' },
-  { key: 'gym_nonac_monthly', facility: 'Gym Non-AC - Monthly', price: '₹0/month', note: 'Strength zone · Non-AC' },
-  { key: 'gym_nonac_quarterly', facility: 'Gym Non-AC - Quarterly', price: '₹0/quarter', note: 'Strength zone · Non-AC' },
-  { key: 'gym_nonac_halfyearly', facility: 'Gym Non-AC - Half-Yearly', price: '₹0/half-year', note: 'Strength zone · Non-AC' },
-  { key: 'gym_nonac_yearly', facility: 'Gym Non-AC - Yearly', price: '₹0/year', note: 'Strength zone · Non-AC' },
-  { key: 'badminton_membership', facility: 'Badminton Membership', price: '₹0/month', note: '1 Hour Court Access Per Day' },
-  { key: 'total_membership', facility: 'Total Membership', price: '₹0/month', note: 'Full access to Gym (AC/Non-AC) & Badminton courts' },
-];
+const DEFAULT_PRICES = {
+  badminton_1: 0,
+  turf_weekday: 0,
+  turf_weekend: 0,
+  gym_ac_monthly: 0,
+  gym_ac_quarterly: 0,
+  gym_ac_halfyearly: 0,
+  gym_ac_yearly: 0,
+  gym_nonac_monthly: 0,
+  gym_nonac_quarterly: 0,
+  gym_nonac_halfyearly: 0,
+  gym_nonac_yearly: 0,
+  badminton_membership: 0,
+  total_membership: 0,
+};
 
 const FacilitiesPage = () => {
   const [facilities, setFacilities] = useState(DEFAULT_FACILITIES);
-  const [pricingTable, setPricingTable] = useState(DEFAULT_PRICING_TABLE);
+  const [prices, setPrices] = useState(DEFAULT_PRICES);
+  const [activeTab, setActiveTab] = useState('bookings');
 
   useEffect(() => {
     axios.get(`${API}/pricing/`)
       .then(res => {
         const data = res.data;
+        if (!data) return;
+
+        setPrices(prev => ({
+          ...prev,
+          ...data
+        }));
         
         // update facilities card prices
         setFacilities(prev => prev.map(f => {
@@ -91,21 +98,6 @@ const FacilitiesPage = () => {
             return { ...f, price: `₹${Number(data.badminton_1)}/hour per court` };
           }
           return f;
-        }));
-
-        // update pricing table
-        setPricingTable(prev => prev.map(row => {
-          if (data[row.key] !== undefined) {
-            let unit = 'session';
-            if (row.key === 'badminton_1' || row.key === 'badminton_2' || row.key === 'badminton_3') unit = 'hour';
-            else if (row.key.endsWith('_yearly')) unit = 'year';
-            else if (row.key.endsWith('_halfyearly')) unit = 'half-year';
-            else if (row.key.endsWith('_quarterly')) unit = 'quarter';
-            else if (row.key.endsWith('_monthly') || row.key === 'badminton_membership' || row.key === 'total_membership') unit = 'month';
-            
-            return { ...row, price: `₹${Number(data[row.key]).toLocaleString('en-IN')}/${unit}` };
-          }
-          return row;
         }));
       })
       .catch(err => console.error("Error fetching facilities prices:", err));
@@ -191,24 +183,265 @@ const FacilitiesPage = () => {
       </div>
     </section>
 
-    {/* QUICK PRICING TABLE */}
+    {/* QUICK PRICING TABLE / TABBED PRICING DASHBOARD */}
     <section style={{ padding: '5rem 0', background: 'var(--bg)', borderTop: '1px solid rgba(201,168,76,0.08)' }}>
       <div className="container">
         <div className="section-label">At a Glance</div>
         <h2 className="section-title" style={{ marginBottom: '2.5rem' }}>PRICING <span className="gold-text">SUMMARY</span></h2>
-        <div style={{ background: 'linear-gradient(145deg, var(--bg-card), var(--bg-alt))', border: '1px solid rgba(201,168,76,0.15)', overflow: 'hidden' }}>
-          <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
-          {pricingTable.map((row, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 2rem', borderBottom: i < 6 ? '1px solid var(--border-sub)' : 'none', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <div>
-                <div style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.95rem', color: 'var(--text)' }}>{row.facility}</div>
-                <div style={{ fontFamily: 'Rajdhani', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>{row.note}</div>
-              </div>
-              <div style={{ fontFamily: 'Bebas Neue', fontSize: '1.4rem', color: 'var(--gold)' }}>{row.price}</div>
-            </div>
+        
+        {/* Tab Controls */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+          {[
+            { id: 'bookings', label: 'Casual Bookings', icon: '⚽' },
+            { id: 'gym', label: 'Gym Memberships', icon: '🏋️' },
+            { id: 'club', label: 'Club Memberships', icon: '💳' },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                padding: '0.75rem 1.5rem',
+                background: activeTab === tab.id ? 'var(--gold)' : 'rgba(255,255,255,0.02)',
+                color: activeTab === tab.id ? 'var(--on-gold)' : 'var(--text-sub)',
+                border: activeTab === tab.id ? '1px solid var(--gold)' : '1px solid var(--border-sub)',
+                fontFamily: 'Rajdhani',
+                fontWeight: 700,
+                fontSize: '0.85rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              <span>{tab.icon}</span> {tab.label}
+            </button>
           ))}
         </div>
-        <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+
+        {/* Tab Panels */}
+        <div style={{ minHeight: '320px', position: 'relative' }}>
+          <AnimatePresence mode="wait">
+            {activeTab === 'bookings' && (
+              <motion.div
+                key="bookings"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+                style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}
+              >
+                {/* Badminton Booking Card */}
+                <div style={{ background: 'linear-gradient(145deg, var(--bg-card), var(--bg-alt))', border: '1px solid rgba(201,168,76,0.15)', padding: '2.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏸</div>
+                  <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '1.6rem', color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '0.03em' }}>BADMINTON COURT</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                    Reserve synthetic badminton courts on an hourly basis. Perfect for single games or regular friendly play. Available across 3 premium synthetic courts.
+                  </p>
+                  <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+                    <span style={{ fontFamily: 'Bebas Neue', fontSize: '2.2rem', color: 'var(--gold)', lineHeight: 1 }}>
+                      ₹{Number(prices.badminton_1).toLocaleString('en-IN')}
+                    </span>
+                    <span style={{ fontFamily: 'Rajdhani', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      / hour per court
+                    </span>
+                  </div>
+                </div>
+
+                {/* Football Turf Booking Card */}
+                <div style={{ background: 'linear-gradient(145deg, var(--bg-card), var(--bg-alt))', border: '1px solid rgba(201,168,76,0.15)', padding: '2.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⚽</div>
+                  <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '1.6rem', color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '0.03em' }}>FOOTBALL TURF</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                    FIFA-quality synthetic turf with high-luminance floodlights. Bookable hourly slots for football/cricket matches and corporate sports events.
+                  </p>
+                  <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px dashed var(--border-sub)', paddingBottom: '0.5rem' }}>
+                      <span style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-sub)' }}>WEEKDAYS (MON-FRI)</span>
+                      <span style={{ fontFamily: 'Bebas Neue', fontSize: '1.5rem', color: 'var(--gold)' }}>
+                        ₹{Number(prices.turf_weekday).toLocaleString('en-IN')}/session
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-sub)' }}>WEEKENDS (SAT-SUN)</span>
+                      <span style={{ fontFamily: 'Bebas Neue', fontSize: '1.5rem', color: 'var(--gold)' }}>
+                        ₹{Number(prices.turf_weekend).toLocaleString('en-IN')}/session
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'gym' && (
+              <motion.div
+                key="gym"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+                style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}
+              >
+                {/* Gym AC Subscriptions */}
+                <div style={{ background: 'linear-gradient(145deg, var(--bg-card), var(--bg-alt))', border: '1px solid rgba(201,168,76,0.15)', padding: '2.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '2rem' }}>🏋️</div>
+                    <span style={{ padding: '0.2rem 0.6rem', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)', fontFamily: 'Rajdhani', fontSize: '0.65rem', letterSpacing: '0.15em', color: 'var(--gold)', fontWeight: 600 }}>AIR CONDITIONED</span>
+                  </div>
+                  <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '1.8rem', color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '0.03em' }}>AC GYM FLOOR</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+                    Full access to AC gym, premium cardio deck, strength machines, free weights, and certified floor training assistance.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {[
+                      { label: 'MONTHLY', value: prices.gym_ac_monthly },
+                      { label: 'QUARTERLY', value: prices.gym_ac_quarterly },
+                      { label: 'HALF-YEARLY', value: prices.gym_ac_halfyearly },
+                      { label: 'YEARLY', value: prices.gym_ac_yearly, badge: 'BEST VALUE' },
+                    ].map((plan, index) => (
+                      <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: index < 3 ? '1px solid var(--border-sub)' : 'none', paddingBottom: '0.6rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-sub)' }}>{plan.label}</span>
+                          {plan.badge && (
+                            <span style={{ background: 'var(--gold)', color: 'var(--on-gold)', fontSize: '0.55rem', fontWeight: 700, padding: '0.1rem 0.3rem', letterSpacing: '0.05em' }}>{plan.badge}</span>
+                          )}
+                        </div>
+                        <span style={{ fontFamily: 'Bebas Neue', fontSize: '1.4rem', color: 'var(--gold)' }}>
+                          ₹{Number(plan.value).toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Gym Non-AC Subscriptions */}
+                <div style={{ background: 'linear-gradient(145deg, var(--bg-card), var(--bg-alt))', border: '1px solid rgba(201,168,76,0.15)', padding: '2.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '2rem' }}>💪</div>
+                    <span style={{ padding: '0.2rem 0.6rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-sub)', fontFamily: 'Rajdhani', fontSize: '0.65rem', letterSpacing: '0.15em', color: 'var(--text-muted)', fontWeight: 600 }}>NON-AC ZONE</span>
+                  </div>
+                  <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '1.8rem', color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '0.03em' }}>NON-AC GYM FLOOR</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+                    Focus on heavy strength lifts, free weights training, raw iron machinery, and customized coaching plans.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {[
+                      { label: 'MONTHLY', value: prices.gym_nonac_monthly },
+                      { label: 'QUARTERLY', value: prices.gym_nonac_quarterly },
+                      { label: 'HALF-YEARLY', value: prices.gym_nonac_halfyearly },
+                      { label: 'YEARLY', value: prices.gym_nonac_yearly, badge: 'SAVINGS' },
+                    ].map((plan, index) => (
+                      <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: index < 3 ? '1px solid var(--border-sub)' : 'none', paddingBottom: '0.6rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-sub)' }}>{plan.label}</span>
+                          {plan.badge && (
+                            <span style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--text)', fontSize: '0.55rem', fontWeight: 600, padding: '0.1rem 0.3rem', letterSpacing: '0.05em' }}>{plan.badge}</span>
+                          )}
+                        </div>
+                        <span style={{ fontFamily: 'Bebas Neue', fontSize: '1.4rem', color: 'var(--text-sub)' }}>
+                          ₹{Number(plan.value).toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'club' && (
+              <motion.div
+                key="club"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+                style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}
+              >
+                {/* Badminton Membership Card */}
+                <div style={{ background: 'linear-gradient(145deg, var(--bg-card), var(--bg-alt))', border: '1px solid rgba(201,168,76,0.15)', padding: '2.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }} />
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏸</div>
+                  <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '1.8rem', color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '0.03em' }}>BADMINTON MEMBERSHIP</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+                    Includes 1 hour daily court access, priority booking privileges on synthetic courts, and member coaching discounts.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2.5rem' }}>
+                    {['1 Hour Court Access Per Day', '3 Synthetic Courts Access', 'Rental Equipment Discounts', 'Priority Court Reservations'].map((perk, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ color: 'var(--gold)', fontSize: '0.9rem' }}>✓</span>
+                        <span style={{ fontFamily: 'Inter', fontSize: '0.8rem', color: 'var(--text-sub)' }}>{perk}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+                    <span style={{ fontFamily: 'Bebas Neue', fontSize: '2.2rem', color: 'var(--gold)', lineHeight: 1 }}>
+                      ₹{Number(prices.badminton_membership).toLocaleString('en-IN')}
+                    </span>
+                    <span style={{ fontFamily: 'Rajdhani', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+                      / month
+                    </span>
+                  </div>
+                </div>
+
+                {/* Total Membership Card - Highlighted popular option */}
+                <div style={{
+                  background: 'linear-gradient(145deg, rgba(28,26,20,0.85), rgba(15,15,15,0.95))',
+                  border: '2px solid var(--gold)',
+                  boxShadow: '0 8px 30px rgba(201,168,76,0.18)',
+                  padding: '2.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    right: '20px',
+                    background: 'var(--gold)',
+                    color: 'var(--on-gold)',
+                    fontFamily: 'Rajdhani',
+                    fontSize: '0.65rem',
+                    fontWeight: 800,
+                    letterSpacing: '0.15em',
+                    padding: '0.25rem 0.75rem',
+                    textTransform: 'uppercase'
+                  }}>
+                    RECOMMENDED
+                  </div>
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👑</div>
+                  <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '1.8rem', color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '0.03em' }}>TOTAL MEMBERSHIP</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+                    Our all-access premium pass. Full access to Gym floor (both AC & Non-AC), unlimited badminton, and turf discounts.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2.5rem' }}>
+                    {['Full Gym Floor Access (AC & Non-AC)', 'Unlimited Badminton Courts Play', 'Turf Sessions at Special Member Rates', '2 Free Guest Passes Per Month', 'Free Towel & Locker Service', '1-on-1 Nutrition Consultation'].map((perk, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ color: 'var(--gold)', fontSize: '0.9rem' }}>✓</span>
+                        <span style={{ fontFamily: 'Inter', fontSize: '0.85rem', color: 'var(--text)' }}>{perk}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+                    <span style={{ fontFamily: 'Bebas Neue', fontSize: '2.4rem', color: 'var(--gold)', lineHeight: 1 }}>
+                      ₹{Number(prices.total_membership).toLocaleString('en-IN')}
+                    </span>
+                    <span style={{ fontFamily: 'Rajdhani', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+                      / month
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div style={{ marginTop: '3rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <Link to="/book" style={{ textDecoration: 'none' }}><button className="btn-primary">Book a Session →</button></Link>
           <Link to="/membership" style={{ textDecoration: 'none' }}><button className="btn-outline">View Memberships</button></Link>
         </div>
