@@ -56,6 +56,7 @@ const HomePage = () => {
               { icon: '🚻', title: 'Unisex Gym Floor', desc: 'Fully unisex gym layout offering safe, inclusive, and professional training environments for everyone.' },
               { icon: '🚿', title: 'Clean Amenities', desc: 'Dedicated changing rooms, secure locker cabinets, clean showers, and fresh water stations.' },
               { icon: '⚡', title: 'Power Backup', desc: '100% power backup support ensuring uninterrupted games under the floodlights and air conditioning.' },
+              { icon: '🅿️', title: 'Free Parking', desc: 'Spacious and secure parking area for both two-wheelers and cars right in front of the complex.' },
               { icon: '🏆', title: 'Tournament Hosting', desc: 'We host local badminton leagues, football tournaments, and corporate sports events.' },
             ].map((item, i) => (
               <motion.div key={i} className="ksc-why-card" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>
