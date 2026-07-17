@@ -7,8 +7,8 @@ import SplitText from '../components/SplitText';
 const API = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
 const DEFAULT_PLANS = [
-  { key: 'gym_ac', name: 'GYM AC', isGym: true, prices: { monthly: 0, quarterly: 0, halfyearly: 0, yearly: 0 }, popular: false, features: ['Cardio & Strength Machines', 'AC Environment', 'Personal Training Available', '5AM – 10PM Access', 'Towel Service'], cta: 'Get Started' },
-  { key: 'gym_nonac', name: 'GYM NON-AC', isGym: true, prices: { monthly: 0, quarterly: 0, halfyearly: 0, yearly: 0 }, popular: false, features: ['Strength Training Machines', 'Non-AC Facility', 'Personal Training Available', '5AM – 10PM Access', 'Heavy Free Weights'], cta: 'Get Started' },
+  { key: 'gym_ac', name: 'GYM AC', isGym: true, prices: { monthly: 0, quarterly: 0, halfyearly: 0, yearly: 0 }, popular: false, features: ['Cardio & Strength Machines', 'AC Environment', 'Unisex Gym Floor', 'Personal Training Available', '5AM – 10PM Access', 'Towel Service'], cta: 'Get Started' },
+  { key: 'gym_nonac', name: 'GYM NON-AC', isGym: true, prices: { monthly: 0, quarterly: 0, halfyearly: 0, yearly: 0 }, popular: false, features: ['Strength Training Machines', 'Non-AC Facility', 'Unisex Gym Floor', 'Personal Training Available', '5AM – 10PM Access', 'Heavy Free Weights'], cta: 'Get Started' },
   { key: 'badminton_membership', name: 'BADMINTON', price: 0, period: '/month', popular: false, features: ['1 Hour Court Access Per Day', '3 Synthetic Courts', 'Equipment Rental Discounts', 'Coaching Available', '5AM – 11PM Access', 'Priority Booking'], cta: 'Get Started' },
   { key: 'total_membership', name: 'TOTAL MEMBERSHIP', price: 0, period: '/month', popular: true, features: ['Full Gym Access (AC & Non-AC)', 'Unlimited Badminton Courts', 'Turf Bookings (Special Rates)', 'Priority Reservations', 'Guest Passes (2/month)', 'Personal Coaching Sessions', 'Nutrition Consultation'], cta: 'Contact Us' },
 ];

@@ -50,9 +50,12 @@ const HomePage = () => {
             {[
               { icon: '🟢', title: 'All Synthetic', desc: 'Every badminton court uses premium ITF-approved synthetic surface for the best play experience.' },
               { icon: '🌙', title: 'Late Hours', desc: 'Open till 11PM every day — train after work, beat the crowds, play under the lights.' },
-              { icon: '💲', title: 'Affordable', desc: 'Courts from ₹300/hr, gym from ₹700/month. No hidden fees, no long lock-ins.' },
+              { icon: '💲', title: 'Affordable', desc: 'Courts from ₹300/hr, gym from ₹800/month. No hidden fees, no long lock-ins.' },
               { icon: '📍', title: 'Central Location', desc: 'Easily accessible at Bazzar Road, Padappai — close to residential areas and main roads.' },
-              { icon: '👨‍🏫', title: 'Expert Coaches', desc: '18+ certified trainers and coaches for gym, badminton, and football training.' },
+              { icon: '👩‍🏫', title: 'Expert Coaches', desc: '18+ certified trainers and coaches for gym, badminton, and football training.' },
+              { icon: '🚻', title: 'Unisex Gym Floor', desc: 'Fully unisex gym layout offering safe, inclusive, and professional training environments for everyone.' },
+              { icon: '🚿', title: 'Clean Amenities', desc: 'Dedicated changing rooms, secure locker cabinets, clean showers, and fresh water stations.' },
+              { icon: '⚡', title: 'Power Backup', desc: '100% power backup support ensuring uninterrupted games under the floodlights and air conditioning.' },
               { icon: '🏆', title: 'Tournament Hosting', desc: 'We host local badminton leagues, football tournaments, and corporate sports events.' },
             ].map((item, i) => (
               <motion.div key={i} className="ksc-why-card" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>

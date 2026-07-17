@@ -24,14 +24,14 @@ const DEFAULT_FACILITIES = [
   {
     id: 'gym-ac', icon: '🏋️', name: 'Fitness Gym — AC', price: 'from ₹0/month', hours: '5AM – 10PM',
     desc: 'Beat the heat while you train. Our air-conditioned gym floor features premium cardio machines, weight stations, and free weights.',
-    features: ['Premium Cardio Machines', 'Weight Stations', 'Free Weights Area', 'Personal Training Available', 'AC Environment'],
+    features: ['Premium Cardio Machines', 'Weight Stations', 'Free Weights Area', 'Unisex Gym Floor', 'Personal Training Available', 'AC Environment'],
     tag: 'GYM',
     link: '/gym',
   },
   {
     id: 'gym-nonac', icon: '💪', name: 'Fitness Gym — Non-AC', price: 'from ₹0/month', hours: '5AM – 10PM',
     desc: 'Train hard in our strength-focused non-AC gym. All the iron you need to build serious muscle.',
-    features: ['Strength Training Machines', 'Heavy Free Weights', 'Barbells & Dumbbells', 'Personal Training Available'],
+    features: ['Strength Training Machines', 'Heavy Free Weights', 'Barbells & Dumbbells', 'Unisex Gym Floor', 'Personal Training Available'],
     tag: 'GYM',
     link: '/gym',
   },
