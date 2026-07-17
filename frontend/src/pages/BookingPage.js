@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CustomSelect from '../components/CustomSelect';
+import FluidDropdown from '../components/ui/FluidDropdown';
 import SplitText from '../components/SplitText';
 import AerialCourtIllustration from '../components/AerialCourtIllustration';
 
@@ -374,7 +375,7 @@ const BookingPage = () => {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
                         <div>
                           <label style={labelStyle}>Facility / Plan Option</label>
-                          <CustomSelect
+                          <FluidDropdown
                             name="facility"
                             value={form.facility}
                             onChange={handleChange}
