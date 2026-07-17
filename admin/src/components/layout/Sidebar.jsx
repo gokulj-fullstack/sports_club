@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, CalendarClock, Clock3, CreditCard, Users, BarChart3, Trophy, X, Coins,
+  LayoutDashboard, CalendarClock, Clock3, CreditCard, Users, BarChart3, Trophy, X, Coins, UserCheck,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/slots', label: 'Slot Management', icon: Clock3 },
   { to: '/payments', label: 'Payments', icon: CreditCard },
   { to: '/members', label: 'Members', icon: Users },
+  { to: '/users', label: 'User Accounts', icon: UserCheck },
   { to: '/pricing', label: 'Pricing Settings', icon: Coins },
   { to: '/reports', label: 'Reports', icon: BarChart3 },
 ];

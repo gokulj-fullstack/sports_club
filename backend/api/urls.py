@@ -9,6 +9,7 @@ admin_router.register(r'slots', admin_views.SlotViewSet, basename='admin-slots')
 admin_router.register(r'members', admin_views.MemberViewSet, basename='admin-members')
 admin_router.register(r'payments', admin_views.PaymentViewSet, basename='admin-payments')
 admin_router.register(r'pricing', admin_views.PricingSettingViewSet, basename='admin-pricing')
+admin_router.register(r'users', admin_views.UserAccountViewSet, basename='admin-users')
 
 urlpatterns = [
     # ── Public site endpoints ──

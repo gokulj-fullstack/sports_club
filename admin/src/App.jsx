@@ -12,6 +12,7 @@ import Bookings from './pages/Bookings';
 import Slots from './pages/Slots';
 import Payments from './pages/Payments';
 import Members from './pages/Members';
+import Users from './pages/Users';
 import Pricing from './pages/Pricing';
 import Reports from './pages/Reports';
 import NotFound from './pages/NotFound';
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="/slots" element={<Slots />} />
               <Route path="/payments" element={<Payments />} />
               <Route path="/members" element={<Members />} />
+              <Route path="/users" element={<Users />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/reports" element={<Reports />} />
             </Route>

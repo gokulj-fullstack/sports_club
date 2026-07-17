@@ -130,6 +130,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
         return qs
 
 
+from accounts.models import CustomUser
+from accounts.serializers import UserSerializer
+
 class PricingSettingViewSet(viewsets.ModelViewSet):
     """CRUD for global pricing settings (bookings and memberships)."""
     queryset = PricingSetting.objects.all()
@@ -143,6 +146,22 @@ class PricingSettingViewSet(viewsets.ModelViewSet):
             qs = qs.filter(category=category)
         return qs
 
+
+class UserAccountViewSet(viewsets.ModelViewSet):
+    """CRUD for registered frontend user accounts."""
+    queryset = CustomUser.objects.all().order_by('-created_at')
+    serializer_class = UserSerializer
+    permission_classes = ADMIN_PERMISSIONS
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        params = self.request.query_params
+        search = params.get('search')
+        if search:
+            qs = qs.filter(
+                Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search)
+            )
+        return qs
 
 
 # ─────────────────────────── Dashboard stats ────────────────────────────
