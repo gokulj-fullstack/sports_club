@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import Booking, ContactMessage, PricingSetting
+from .models import Booking, ContactMessage, PricingSetting, Payment
 from .serializers import BookingSerializer, ContactMessageSerializer, PricingSettingSerializer
 
 logger = logging.getLogger(__name__)
@@ -83,8 +83,25 @@ def send_whatsapp_notification(message_text):
 def create_booking(request):
     serializer = BookingSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        
+        booking = serializer.save()
+
+        # ── Auto-create a Payment record for paid bookings ──────────────
+        pay_status = request.data.get('payment_status', '')
+        payment_id = request.data.get('payment_id', '')
+        if pay_status == 'paid':
+            try:
+                Payment.objects.create(
+                    booking=booking,
+                    customer_name=booking.name,
+                    amount=booking.amount,
+                    method='upi',          # Razorpay default
+                    status='success',
+                    transaction_id=payment_id or '',
+                )
+            except Exception as pe:
+                logger.warning("[Payment record creation failed]: %s", pe)
+        # ──────────────────────────────────────────────────────────────────
+
         # Send WhatsApp Notification to Owner
         data = serializer.data
         name = data.get('name', 'Unknown')
@@ -93,7 +110,7 @@ def create_booking(request):
         date = data.get('date', '')
         time_slot = data.get('time_slot', '')
         message = data.get('message', 'No message')
-        
+
         whatsapp_body = f"""*New Booking Request*
 *Name*: {name}
 *Phone*: {phone}
@@ -102,7 +119,7 @@ def create_booking(request):
 *Time Slot*: {time_slot}
 *Message*: {message}"""
         send_whatsapp_notification(whatsapp_body)
-        
+
         return Response({'message': 'Booking confirmed!', 'data': serializer.data}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
