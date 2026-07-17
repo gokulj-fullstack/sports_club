@@ -347,45 +347,10 @@ const BookingPage = () => {
 
       <section style={{ padding: '4rem 0 6rem', background: 'var(--bg)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: '5rem', alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.1fr', gap: '4rem', alignItems: 'start' }}>
 
-            {/* Left info panel */}
+            {/* Left: Booking Form (2fr) */}
             <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
-              {[
-                { icon: '📍', title: 'Address', info: '6/518, Bazzar Road, Padappai, Chennai' },
-                { icon: '📞', title: 'Phone', info: '+91 90807 03491' },
-                { icon: '✉️', title: 'Email', info: 'jgokul823@gmail.com' },
-                { icon: '⏰', title: 'Open', info: 'Daily 5:00 AM – 11:00 PM' },
-              ].map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * i + 0.3 }}
-                  style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
-                  <div style={{ width: '36px', height: '36px', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 }}>{item.icon}</div>
-                  <div>
-                    <div style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.15em', color: 'var(--gold)', textTransform: 'uppercase' }}>{item.title}</div>
-                    <div style={{ color: 'var(--text-sub)', fontSize: '0.9rem', marginTop: '0.1rem' }}>{item.info}</div>
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Price preview */}
-              {selectedFacility && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-premium"
-                  style={{ marginTop: '2rem', padding: '1.5rem', borderColor: 'var(--gold)' }}>
-                  <div style={{ fontFamily: 'Rajdhani', fontSize: '0.7rem', letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Booking Summary</div>
-                  <div style={{ fontFamily: 'Bebas Neue', fontSize: '1.4rem', color: 'var(--text)', marginBottom: '0.25rem' }}>{selectedFacility.label}</div>
-                  {selectedFacility.unit === 'hour' && (
-                    <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>{form.hours} hour{form.hours > 1 ? 's' : ''} × ₹{selectedFacility.price}</div>
-                  )}
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginTop: '0.75rem', borderTop: '1px solid var(--border-sub)', paddingTop: '0.75rem' }}>
-                    <span style={{ fontFamily: 'Rajdhani', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total</span>
-                    <span style={{ fontFamily: 'Bebas Neue', fontSize: '2.2rem', color: 'var(--gold)', lineHeight: 1 }}>₹{totalAmount}</span>
-                  </div>
-                </motion.div>
-              )}
-            </motion.div>
-
-            {/* Right: Form or Payment */}
-            <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="glass-premium" style={{ padding: '2.5rem' }}>
                 <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)', marginBottom: '2rem' }} />
 
@@ -398,183 +363,214 @@ const BookingPage = () => {
 
                 {/* STEP 1: Booking Details */}
                 {step === 1 && (
-                  <form onSubmit={handleDetails}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                      <div>
-                        <label style={labelStyle}>Full Name</label>
-                        <input name="name" value={form.name} onChange={handleChange} required placeholder="Your name" style={inputStyle}
-                          onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
+                  <form onSubmit={handleDetails} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    
+                    {/* Section 1: Choose Facility */}
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                        <span style={{ background: 'var(--gold)', color: 'var(--bg)', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.8rem', border: '1px solid var(--gold)' }}>1</span>
+                        <h3 style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.88rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text)', margin: 0 }}>Select Facility & Plan</h3>
                       </div>
-                      <div>
-                        <label style={labelStyle}>Phone</label>
-                        <input name="phone" value={form.phone} onChange={handleChange} required placeholder="+91 XXXXX XXXXX" style={inputStyle}
-                          onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
-                      </div>
-                    </div>
-                    <div style={{ marginBottom: '1rem' }}>
-                      <label style={labelStyle}>Email</label>
-                      <input name="email" type="email" value={form.email} onChange={handleChange} required placeholder="you@email.com" style={inputStyle}
-                        onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
-                    </div>
-                    <div style={{ marginBottom: '1rem' }}>
-                      <label style={labelStyle}>Facility</label>
-                      <CustomSelect
-                        name="facility"
-                        value={form.facility}
-                        onChange={handleChange}
-                        placeholder="Select a facility"
-                        options={selectOptions}
-                      />
-                    </div>
-
-                    {/* Interactive Court Illustration */}
-                    {['badminton_1', 'badminton_2', 'badminton_3'].includes(form.facility) && (
-                      <div style={{ marginTop: '1rem', marginBottom: '1.5rem' }}>
-                        <div style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.75rem', letterSpacing: '0.12em', color: 'var(--gold)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                          Select Court Visually:
-                        </div>
-                        <AerialCourtIllustration
-                          selectedCourt={form.facility}
-                          onSelectCourt={(courtId) => setForm({ ...form, facility: courtId })}
-                        />
-                      </div>
-                    )}
-                    {(selectedFacility?.unit === 'hour' || form.facility === 'turf') && (() => {
-                      const pricePerUnit = selectedFacility?.price || 0;
-                      const unitLabel = form.facility === 'turf' ? 'session' : 'hour';
-                      const maxHours = form.facility === 'turf' ? 6 : 4;
-                      return (
-                        <div style={{ marginBottom: '1rem' }}>
-                          <label style={labelStyle}>Duration (Hours)</label>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                        <div>
+                          <label style={labelStyle}>Facility / Plan Option</label>
                           <CustomSelect
-                            name="hours"
-                            value={form.hours}
+                            name="facility"
+                            value={form.facility}
                             onChange={handleChange}
-                            placeholder="Select duration"
-                            options={Array.from({ length: maxHours }, (_, i) => i + 1).map(h => ({
-                              value: h,
-                              label: `${h} hr${h > 1 ? 's' : ''} — ₹${pricePerUnit * h} (${h} ${unitLabel}${h > 1 ? 's' : ''})`
-                            }))}
+                            placeholder="Select a facility or gym membership plan"
+                            options={selectOptions}
                           />
                         </div>
-                      );
-                    })()}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                      <div>
-                        <label style={labelStyle}>Date</label>
-                        <input name="date" type="date" value={form.date} onChange={handleChange} required min={new Date().toISOString().split('T')[0]} style={{ ...inputStyle, cursor: 'pointer' }}
-                          onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
                       </div>
-                      <div style={{ gridColumn: '1 / -1' }}>
-                        <label style={labelStyle}>
-                          Time Slot
-                          {slotsLoading && <span style={{ marginLeft: '0.5rem', fontSize: '0.65rem', color: 'var(--gold)', letterSpacing: '0.1em' }}>LOADING...</span>}
-                        </label>
-                        {/* Inline slot grid with real-time booked + duration-aware indicators */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.4rem' }}>
-                          {timeSlots.map((t, idx) => {
-                            const isBooked = bookedSlots.includes(t);
-                            const isSelected = form.time_slot === t;
-                            // Check if slot falls within the selected duration range
-                            const startIdx = timeSlots.indexOf(form.time_slot);
-                            const numHours = parseInt(form.hours) || 1;
-                            const isInRange = startIdx !== -1 && idx > startIdx && idx < startIdx + numHours;
-                            // Check if picking this slot would overlap with any booked slot
-                            const wouldOverlap = !isBooked && (() => {
-                              const h = parseInt(form.hours) || 1;
-                              for (let i = 0; i < h; i++) {
-                                const checkSlot = timeSlots[idx + i];
-                                if (checkSlot && bookedSlots.includes(checkSlot)) return true;
-                              }
-                              return false;
-                            })();
-
-                            let borderColor = '1px solid var(--border)';
-                            let bg = 'rgba(255,255,255,0.03)';
-                            let color = 'var(--text-sub)';
-                            let cursor = 'pointer';
-                            let title = t;
-
-                            if (isBooked) {
-                              borderColor = '1px solid rgba(244,67,54,0.25)';
-                              bg = 'rgba(244,67,54,0.06)';
-                              color = 'rgba(244,67,54,0.5)';
-                              cursor = 'not-allowed';
-                              title = `${t} — BOOKED`;
-                            } else if (wouldOverlap) {
-                              borderColor = '1px solid rgba(245,158,11,0.3)';
-                              bg = 'rgba(245,158,11,0.05)';
-                              color = 'rgba(245,158,11,0.5)';
-                              cursor = 'not-allowed';
-                              title = `${t} — Would overlap a booked slot`;
-                            } else if (isSelected) {
-                              borderColor = '1px solid var(--gold)';
-                              bg = 'rgba(201,168,76,0.2)';
-                              color = 'var(--gold)';
-                            } else if (isInRange) {
-                              borderColor = '1px solid rgba(201,168,76,0.4)';
-                              bg = 'rgba(201,168,76,0.07)';
-                              color = 'rgba(201,168,76,0.7)';
-                            }
-
-                            return (
-                              <button
-                                key={t}
-                                type="button"
-                                disabled={isBooked || wouldOverlap}
-                                onClick={() => !(isBooked || wouldOverlap) && setForm({ ...form, time_slot: t })}
-                                title={title}
-                                style={{
-                                  padding: '0.4rem 0.2rem',
-                                  fontSize: '0.7rem',
-                                  fontFamily: 'Rajdhani',
-                                  fontWeight: 600,
-                                  letterSpacing: '0.05em',
-                                  textAlign: 'center',
-                                  border: borderColor,
-                                  background: bg,
-                                  color,
-                                  cursor,
-                                  position: 'relative',
-                                  transition: 'all 0.15s',
-                                }}
-                              >
-                                {t}
-                                {isBooked && (
-                                  <div style={{
-                                    position: 'absolute', top: '-6px', right: '-4px',
-                                    fontSize: '0.45rem', fontWeight: 800, letterSpacing: '0.05em',
-                                    background: 'rgba(244,67,54,0.85)', color: '#fff',
-                                    padding: '1px 3px', lineHeight: 1.4,
-                                  }}>BOOKED</div>
-                                )}
-                                {wouldOverlap && !isBooked && (
-                                  <div style={{
-                                    position: 'absolute', top: '-6px', right: '-4px',
-                                    fontSize: '0.45rem', fontWeight: 800, letterSpacing: '0.05em',
-                                    background: 'rgba(245,158,11,0.85)', color: '#fff',
-                                    padding: '1px 3px', lineHeight: 1.4,
-                                  }}>OVERLAP</div>
-                                )}
-                              </button>
-                            );
-                          })}
+                      
+                      {/* Interactive Court Illustration */}
+                      {['badminton_1', 'badminton_2', 'badminton_3'].includes(form.facility) && (
+                        <div style={{ marginTop: '1.5rem' }}>
+                          <label style={labelStyle}>Select Court Visually</label>
+                          <AerialCourtIllustration
+                            selectedCourt={form.facility}
+                            onSelectCourt={(courtId) => setForm({ ...form, facility: courtId })}
+                          />
                         </div>
-                        {form.time_slot && !bookedSlots.includes(form.time_slot) && (
-                          <div style={{ marginTop: '0.5rem', fontSize: '0.72rem', color: 'var(--gold)', fontFamily: 'Rajdhani', fontWeight: 600, letterSpacing: '0.1em' }}>
-                            ✓ {form.time_slot}
-                            {parseInt(form.hours) > 1 && ` → ${timeSlots[timeSlots.indexOf(form.time_slot) + parseInt(form.hours) - 1] || ''}` }
-                            {` (${form.hours} hr${parseInt(form.hours) > 1 ? 's' : ''})`}
+                      )}
+                    </div>
+
+                    {/* Section 2: Choose Schedule */}
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                        <span style={{ background: 'var(--gold)', color: 'var(--bg)', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.8rem', border: '1px solid var(--gold)' }}>2</span>
+                        <h3 style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.88rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text)', margin: 0 }}>Choose Date & Time</h3>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                        <div>
+                          <label style={labelStyle}>Select Date</label>
+                          <input name="date" type="date" value={form.date} onChange={handleChange} required min={new Date().toISOString().split('T')[0]} style={{ ...inputStyle, cursor: 'pointer' }}
+                            onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
+                        </div>
+                        {(selectedFacility?.unit === 'hour' || form.facility === 'turf') ? (() => {
+                          const pricePerUnit = selectedFacility?.price || 0;
+                          const unitLabel = form.facility === 'turf' ? 'session' : 'hour';
+                          const maxHours = form.facility === 'turf' ? 6 : 4;
+                          return (
+                            <div>
+                              <label style={labelStyle}>Duration</label>
+                              <CustomSelect
+                                name="hours"
+                                value={form.hours}
+                                onChange={handleChange}
+                                placeholder="Select duration"
+                                options={Array.from({ length: maxHours }, (_, i) => i + 1).map(h => ({
+                                  value: h,
+                                  label: `${h} ${unitLabel}${h > 1 ? 's' : ''} — ₹${pricePerUnit * h}`
+                                }))}
+                              />
+                            </div>
+                          );
+                        })() : (
+                          <div style={{ display: 'flex', alignItems: 'center', padding: '0 1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-sub)', borderRadius: '6px', height: '44px', marginTop: '1.6rem' }}>
+                            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'Inter' }}>Membership is valid from start date.</span>
                           </div>
                         )}
                       </div>
+
+                      {/* Time Slots selector */}
+                      {form.date && (selectedFacility?.unit === 'hour' || form.facility === 'turf') && (
+                        <div style={{ borderTop: '1px solid var(--border-sub)', paddingTop: '1.5rem' }}>
+                          <label style={labelStyle}>
+                            Available Time Slots
+                            {slotsLoading && <span style={{ marginLeft: '0.5rem', fontSize: '0.65rem', color: 'var(--gold)', letterSpacing: '0.1em' }}>LOADING...</span>}
+                          </label>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(92px, 1fr))', gap: '0.5rem', marginTop: '0.5rem' }}>
+                            {timeSlots.map((t, idx) => {
+                              const isBooked = bookedSlots.includes(t);
+                              const isSelected = form.time_slot === t;
+                              const startIdx = timeSlots.indexOf(form.time_slot);
+                              const numHours = parseInt(form.hours) || 1;
+                              const isInRange = startIdx !== -1 && idx > startIdx && idx < startIdx + numHours;
+                              const wouldOverlap = !isBooked && (() => {
+                                const h = parseInt(form.hours) || 1;
+                                for (let i = 0; i < h; i++) {
+                                  const checkSlot = timeSlots[idx + i];
+                                  if (checkSlot && bookedSlots.includes(checkSlot)) return true;
+                                }
+                                return false;
+                              })();
+
+                              let borderColor = '1px solid var(--border)';
+                              let bg = 'rgba(255,255,255,0.02)';
+                              let color = 'var(--text-sub)';
+                              let cursor = 'pointer';
+                              let title = t;
+
+                              if (isBooked) {
+                                borderColor = '1px solid rgba(244,67,54,0.3)';
+                                bg = 'rgba(244,67,54,0.07)';
+                                color = 'rgba(244,67,54,0.6)';
+                                cursor = 'not-allowed';
+                                title = `${t} — BOOKED`;
+                              } else if (wouldOverlap) {
+                                borderColor = '1px solid rgba(245,158,11,0.3)';
+                                bg = 'rgba(245,158,11,0.05)';
+                                color = 'rgba(245,158,11,0.5)';
+                                cursor = 'not-allowed';
+                                title = `${t} — Overlaps a booking`;
+                              } else if (isSelected) {
+                                borderColor = '1px solid var(--gold)';
+                                bg = 'rgba(201,168,76,0.2)';
+                                color = 'var(--gold)';
+                              } else if (isInRange) {
+                                borderColor = '1px solid rgba(201,168,76,0.4)';
+                                bg = 'rgba(201,168,76,0.07)';
+                                color = 'rgba(201,168,76,0.7)';
+                              }
+
+                              return (
+                                <button
+                                  key={t}
+                                  type="button"
+                                  disabled={isBooked || wouldOverlap}
+                                  onClick={() => !(isBooked || wouldOverlap) && setForm({ ...form, time_slot: t })}
+                                  title={title}
+                                  style={{
+                                    padding: '0.6rem 0.3rem',
+                                    fontSize: '0.75rem',
+                                    fontFamily: 'Rajdhani',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.05em',
+                                    textAlign: 'center',
+                                    border: borderColor,
+                                    background: bg,
+                                    color,
+                                    cursor,
+                                    position: 'relative',
+                                    transition: 'all 0.15s',
+                                    borderRadius: '4px'
+                                  }}
+                                >
+                                  {t}
+                                  {isBooked && (
+                                    <div style={{
+                                      position: 'absolute', top: '-6px', right: '-4px',
+                                      fontSize: '0.45rem', fontWeight: 800, letterSpacing: '0.05em',
+                                      background: 'rgba(244,67,54,0.9)', color: '#fff',
+                                      padding: '1px 3px', lineHeight: 1.4,
+                                    }}>BOOKED</div>
+                                  )}
+                                  {wouldOverlap && !isBooked && (
+                                    <div style={{
+                                      position: 'absolute', top: '-6px', right: '-4px',
+                                      fontSize: '0.45rem', fontWeight: 800, letterSpacing: '0.05em',
+                                      background: 'rgba(245,158,11,0.9)', color: '#fff',
+                                      padding: '1px 3px', lineHeight: 1.4,
+                                    }}>OVERLAP</div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          {form.time_slot && !bookedSlots.includes(form.time_slot) && (
+                            <div style={{ marginTop: '0.8rem', fontSize: '0.8rem', color: 'var(--gold)', fontFamily: 'Rajdhani', fontWeight: 700, letterSpacing: '0.08em' }}>
+                              Selected Timing: {form.time_slot}
+                              {parseInt(form.hours) > 1 && ` to ${timeSlots[timeSlots.indexOf(form.time_slot) + parseInt(form.hours)] || ''}` }
+                              {` (${form.hours} hr${parseInt(form.hours) > 1 ? 's' : ''})`}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <label style={labelStyle}>Message (optional)</label>
-                      <textarea name="message" value={form.message} onChange={handleChange} rows={2} placeholder="Any special requirements..." style={{ ...inputStyle, resize: 'vertical' }}
-                        onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
+
+                    {/* Section 3: Contact Details */}
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                        <span style={{ background: 'var(--gold)', color: 'var(--bg)', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.8rem', border: '1px solid var(--gold)' }}>3</span>
+                        <h3 style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.88rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text)', margin: 0 }}>Your Information</h3>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                        <div>
+                          <label style={labelStyle}>Full Name</label>
+                          <input name="name" value={form.name} onChange={handleChange} required placeholder="Your name" style={inputStyle}
+                            onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
+                        </div>
+                        <div>
+                          <label style={labelStyle}>Phone</label>
+                          <input name="phone" value={form.phone} onChange={handleChange} required placeholder="+91 XXXXX XXXXX" style={inputStyle}
+                            onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
+                        </div>
+                      </div>
+                      <div style={{ marginBottom: '1rem' }}>
+                        <label style={labelStyle}>Email Address</label>
+                        <input name="email" type="email" value={form.email} onChange={handleChange} required placeholder="you@email.com" style={inputStyle}
+                          onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>Message / Notes (optional)</label>
+                        <textarea name="message" value={form.message} onChange={handleChange} rows={2} placeholder="Any special requirements..." style={{ ...inputStyle, resize: 'vertical' }}
+                          onFocus={e => { e.target.style.borderColor='var(--gold)'; e.target.style.boxShadow='0 0 0 3px var(--gold-dim)'; }} onBlur={e => { e.target.style.borderColor='var(--border)'; e.target.style.boxShadow='none'; }} />
+                      </div>
                     </div>
-                    <button type="submit" style={{ width: '100%', padding: '1rem', background: 'var(--gold)', color: 'var(--on-gold)', border: 'none', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.95rem', letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer' }}>
+
+                    <button type="submit" style={{ width: '100%', padding: '1.1rem', background: 'var(--gold)', color: 'var(--on-gold)', border: 'none', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.95rem', letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '4px', transition: 'background 0.2s' }}>
                       Continue to Payment →
                     </button>
                   </form>
@@ -639,6 +635,56 @@ const BookingPage = () => {
                     </button>
                   </div>
                 )}
+              </div>
+            </motion.div>
+
+            {/* Right: Summary & Info Sidebar (1.1fr) */}
+            <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
+              style={{ position: 'sticky', top: '7rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              
+              {/* Summary Card */}
+              {selectedFacility ? (
+                <div className="glass-premium" style={{ padding: '2rem', border: '1px solid var(--gold)' }}>
+                  <div style={{ fontFamily: 'Rajdhani', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '1rem' }}>Booking Summary</div>
+                  <div style={{ borderLeft: '3px solid var(--gold)', paddingLeft: '0.8rem', marginBottom: '1.25rem' }}>
+                    <div style={{ fontFamily: 'Bebas Neue', fontSize: '1.6rem', color: 'var(--text)', lineHeight: 1.1 }}>{selectedFacility.label.split(' — ')[0]}</div>
+                    {form.date && <div style={{ color: 'var(--text-sub)', fontSize: '0.85rem', marginTop: '0.4rem', fontFamily: 'Inter' }}>📅 {form.date}</div>}
+                    {form.time_slot && <div style={{ color: 'var(--text-sub)', fontSize: '0.85rem', marginTop: '0.1rem', fontFamily: 'Inter' }}>⏰ {form.time_slot} {parseInt(form.hours) > 1 ? `(${form.hours} hours)` : `(1 hour)`}</div>}
+                  </div>
+                  {selectedFacility.unit === 'hour' && (
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.75rem', fontFamily: 'Inter' }}>{form.hours} hour{form.hours > 1 ? 's' : ''} × ₹{selectedFacility.price}</div>
+                  )}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginTop: '1rem', borderTop: '1px solid var(--border-sub)', paddingTop: '1rem' }}>
+                    <span style={{ fontFamily: 'Rajdhani', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total Amount</span>
+                    <span style={{ fontFamily: 'Bebas Neue', fontSize: '2.6rem', color: 'var(--gold)', lineHeight: 1 }}>₹{totalAmount.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="glass-premium" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎫</div>
+                  <div style={{ fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.8rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Select a facility to see summary</div>
+                </div>
+              )}
+
+              {/* Venue info Card */}
+              <div className="glass-premium" style={{ padding: '2rem' }}>
+                <div style={{ fontFamily: 'Rajdhani', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '1.25rem' }}>Venue Details</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {[
+                    { icon: '📍', title: 'Address', info: '6/518, Bazzar Road, Padappai, Chennai' },
+                    { icon: '📞', title: 'Phone', info: '+91 90807 03491' },
+                    { icon: '✉️', title: 'Email', info: 'jgokul823@gmail.com' },
+                    { icon: '⏰', title: 'Open', info: 'Daily 5:00 AM – 11:00 PM' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                      <div style={{ fontSize: '1.1rem', flexShrink: 0 }}>{item.icon}</div>
+                      <div>
+                        <div style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.1em', color: 'var(--gold)', textTransform: 'uppercase', lineHeight: 1 }}>{item.title}</div>
+                        <div style={{ color: 'var(--text-sub)', fontSize: '0.85rem', marginTop: '0.2rem', lineHeight: 1.4 }}>{item.info}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>
